@@ -104,25 +104,25 @@ public class MenuController {
         }
     ).orElseThrow(() ->new NotFoundException(String.format("restaurant with id: %d is not exist", restaurantId), HttpStatus.NOT_FOUND)); // if restaurant is not exists
   }
-  // TODO move to restaurantController, because updates restaurant state
-  @ResponseStatus(HttpStatus.OK)
-  @PutMapping(value = RESTAURANT_MENU_URL, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-  public MenuDto updateMenuForRestaurant(@PathVariable Integer restaurantId, @RequestBody MenuDto menuDto) {
-
-    return restaurantService.get(restaurantId).map(
-        restaurantEntity -> {
-          var menu = menuService.create(menuFactory.createMenuFrom(menuDto));
-          restaurantEntity.setLaunchMenu(menu);
-          restaurantService.update(restaurantId, restaurantEntity);
-
-          menuDto.setId(menu.getId());
-          return menuDto;
-        }
-    ).orElseThrow(
-        () ->new NotFoundException(String.format("restaurant with id: %d is not exist", restaurantId),
-            HttpStatus.NOT_FOUND)
-    ); // if restaurant is not exists
-  }
+//  // TODO move to restaurantController, because updates restaurant state
+//  @ResponseStatus(HttpStatus.OK)
+//  @PutMapping(value = RESTAURANT_MENU_URL, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+//  public MenuDto updateMenuForRestaurant(@PathVariable Integer restaurantId, @RequestBody MenuDto menuDto) {
+//
+//    return restaurantService.get(restaurantId).map(
+//        restaurantEntity -> {
+//          var menu = menuService.create(menuFactory.createMenuFrom(menuDto));
+//          restaurantEntity.setLaunchMenu(menu);
+//          restaurantService.update(restaurantId, restaurantEntity);
+//
+//          menuDto.setId(menu.getId());
+//          return menuDto;
+//        }
+//    ).orElseThrow(
+//        () ->new NotFoundException(String.format("restaurant with id: %d is not exist", restaurantId),
+//            HttpStatus.NOT_FOUND)
+//    ); // if restaurant is not exists
+//  }
   // TODO move to restaurantController, because updates restaurant state
   @ResponseStatus(HttpStatus.OK)
   @PutMapping(value = RESTAURANT_MENU_URL, produces = MediaType.APPLICATION_JSON_VALUE)
