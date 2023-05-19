@@ -10,12 +10,13 @@ import org.hibernate.validator.constraints.Length;
 @Data
 public class Item {
 
-  @NotBlank
-  @Length(max = 128)
+  @NotBlank(message = "field 'name' must be not empty")
+  @Length(max = 128, message = "field's 'name' length must be < 128")
   private String name;
 
-  @Min(0)
-  @Max(Integer.MAX_VALUE)
+  @NotBlank(message = "field 'price' must be not empty")
+  @Min(value = 0 ,message = "field 'price' must be >= 0")
+  @Max(value = 1_000_000_000, message = "field 'price' must be <= 1.000.000.000")
   private BigDecimal price;
 
 }

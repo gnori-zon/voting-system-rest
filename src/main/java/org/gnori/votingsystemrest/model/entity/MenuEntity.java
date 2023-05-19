@@ -22,6 +22,7 @@ import org.hibernate.type.SqlTypes;
 @Table(name = "menu")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class MenuEntity extends BaseEntity{
+
   @Column(length = 128)
   private String name;
 

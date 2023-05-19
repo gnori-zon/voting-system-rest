@@ -8,6 +8,8 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import java.time.LocalDate;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -15,6 +17,8 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor
 @Table(name = "restaurant")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class RestaurantEntity extends BaseEntity {

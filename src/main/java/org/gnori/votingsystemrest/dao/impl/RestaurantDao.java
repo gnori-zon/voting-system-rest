@@ -10,5 +10,7 @@ import org.springframework.stereotype.Repository;
 public interface RestaurantDao extends BaseDao<RestaurantEntity> {
 
   @Query(nativeQuery = true, value = "select r.launch_menu_id is not null from restaurant as r where r.id = :id")
-  boolean isExistMenu(@Param("id") Integer id);
+  boolean isExistsMenu(@Param("id") Integer id);
+
+  boolean existsByName(String name);
 }
