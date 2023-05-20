@@ -1,0 +1,7 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:microservicesDB
+    username: sa
+    password: sa
+  jpa:
+    hibernate.ddl-auto: create-drop

@@ -95,8 +95,10 @@ public class RestaurantService extends AbstractService<RestaurantEntity, Restaur
 
     if ((oldMenu == null && newMenu != null) ||
         (oldMenu != null && newMenu == null) ||
-        ((oldMenu != null && newMenu != null) && (!oldRestaurant.getLaunchMenu().getItemList().equals(newRestaurant.getLaunchMenu().getItemList())))
-    ) {
+        (oldMenu != null && !oldRestaurant.getLaunchMenu().getItemList().equals(
+            newRestaurant.getLaunchMenu().getItemList()
+        ))) {
+
       newRestaurant.setUpdateMenuDate(LocalDate.now());
     }
 
