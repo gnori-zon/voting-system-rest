@@ -1,5 +1,7 @@
 package org.gnori.votingsystemrest.dao.impl;
 
+import java.time.LocalDate;
+import java.util.List;
 import org.gnori.votingsystemrest.dao.BaseDao;
 import org.gnori.votingsystemrest.model.entity.RestaurantEntity;
 import org.springframework.data.jpa.repository.Query;
@@ -13,4 +15,9 @@ public interface RestaurantDao extends BaseDao<RestaurantEntity> {
   boolean isExistsMenu(@Param("id") Integer id);
 
   boolean existsByName(String name);
+
+  List<RestaurantEntity> findAllByUpdateMenuDateEquals(LocalDate updateMenuDate);
+
+  boolean existsByIdAndUpdateMenuDateEquals(Integer id, LocalDate updateMenuDate);
+
 }

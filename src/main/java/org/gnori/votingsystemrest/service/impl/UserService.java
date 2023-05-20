@@ -11,4 +11,5 @@ public class UserService extends AbstractService<UserEntity, UserDao> {
   public UserService(UserDao dao) {
     super(dao);
   }
+
 }

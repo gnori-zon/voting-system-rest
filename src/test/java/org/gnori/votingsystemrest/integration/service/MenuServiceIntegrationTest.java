@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import org.gnori.votingsystemrest.dao.impl.MenuDao;
 import org.gnori.votingsystemrest.dao.impl.RestaurantDao;
+import org.gnori.votingsystemrest.dao.impl.UserDao;
 import org.gnori.votingsystemrest.error.ConflictException;
 import org.gnori.votingsystemrest.error.NotFoundException;
 import org.gnori.votingsystemrest.factory.MenuFactory;
@@ -33,11 +34,11 @@ class MenuServiceIntegrationTest {
 
 
   public MenuServiceIntegrationTest(
-      @Autowired RestaurantDao restaurantDao, @Autowired MenuDao menuDao) {
+      @Autowired RestaurantDao restaurantDao, @Autowired MenuDao menuDao, @Autowired UserDao userDao) {
 
     this.service = new MenuService(menuDao, restaurantDao, new MenuFactory());
 
-    restaurantService = new RestaurantService(restaurantDao, new RestaurantFactory(new MenuFactory()), menuDao);
+    restaurantService = new RestaurantService(menuDao, restaurantDao, userDao, new RestaurantFactory(new MenuFactory()) );
 
   }
 

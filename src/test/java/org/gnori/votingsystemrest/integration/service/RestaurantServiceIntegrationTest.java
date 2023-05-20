@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.util.List;
 import org.gnori.votingsystemrest.dao.impl.MenuDao;
 import org.gnori.votingsystemrest.dao.impl.RestaurantDao;
+import org.gnori.votingsystemrest.dao.impl.UserDao;
 import org.gnori.votingsystemrest.error.ConflictException;
 import org.gnori.votingsystemrest.error.NotFoundException;
 import org.gnori.votingsystemrest.factory.MenuFactory;
@@ -31,10 +32,10 @@ class RestaurantServiceIntegrationTest {
   private Integer menuIdFromRaw;
 
   RestaurantServiceIntegrationTest(
-      @Autowired RestaurantDao restaurantDao, @Autowired MenuDao menuDao) {
+      @Autowired RestaurantDao restaurantDao, @Autowired MenuDao menuDao, @Autowired UserDao userDao) {
 
     var factory = new RestaurantFactory(new MenuFactory());
-    this.service = new RestaurantService(restaurantDao, factory, menuDao);
+    this.service = new RestaurantService(menuDao, restaurantDao, userDao, factory);
 
   }
 

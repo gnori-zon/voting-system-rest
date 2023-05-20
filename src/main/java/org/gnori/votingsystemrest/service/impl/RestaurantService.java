@@ -1,15 +1,18 @@
 package org.gnori.votingsystemrest.service.impl;
 
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
 import org.gnori.votingsystemrest.dao.impl.MenuDao;
 import org.gnori.votingsystemrest.dao.impl.RestaurantDao;
+import org.gnori.votingsystemrest.dao.impl.UserDao;
 import org.gnori.votingsystemrest.error.ConflictException;
 import org.gnori.votingsystemrest.error.NotFoundException;
 import org.gnori.votingsystemrest.factory.RestaurantFactory;
 import org.gnori.votingsystemrest.model.dto.RestaurantDto;
 import org.gnori.votingsystemrest.model.entity.RestaurantEntity;
 import org.gnori.votingsystemrest.service.AbstractService;
+import org.gnori.votingsystemrest.service.impl.enums.RestaurantConditions;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -18,12 +21,19 @@ public class RestaurantService extends AbstractService<RestaurantEntity, Restaur
 
   private final RestaurantFactory restaurantFactory;
   private final MenuDao menuDao;
+  private final UserDao userDao;
 
-  public RestaurantService(RestaurantDao dao, RestaurantFactory restaurantFactory,
-      MenuDao menuDao) {
+  public RestaurantService(
+      MenuDao menuDao,
+      RestaurantDao dao,
+      UserDao userDao,
+      RestaurantFactory restaurantFactory) {
+
     super(dao);
     this.restaurantFactory = restaurantFactory;
     this.menuDao = menuDao;
+    this.userDao = userDao;
+
   }
 
   public boolean isExistsByName(String name) {
@@ -108,4 +118,28 @@ public class RestaurantService extends AbstractService<RestaurantEntity, Restaur
 
   }
 
+  public List<RestaurantDto> getAllRestaurantDtoSatisfyingCondition(
+      RestaurantConditions restaurantCondition) {
+
+    switch (restaurantCondition) {
+      case TODAYS_MENU -> {
+        return restaurantFactory.convertListFrom(
+          dao.findAllByUpdateMenuDateEquals(LocalDate.now()))
+            .stream()
+            .peek(
+              restaurantDto -> {
+                var numberOfVote = userDao.countByVotedForAndDateVoteEquals(
+                    restaurantDto.getId(),
+                    LocalDate.now()
+                );
+                restaurantDto.setNumberOfVotes(numberOfVote);
+              })
+            .toList();
+        }
+      default -> {
+        return Collections.emptyList();
+      }
+    }
+
+  }
 }

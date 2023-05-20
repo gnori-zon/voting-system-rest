@@ -16,4 +16,6 @@ public class RestaurantDto {
   private String name;
 
   private MenuDto launchMenu;
+
+  private Integer numberOfVotes;
 }
