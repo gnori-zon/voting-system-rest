@@ -4,13 +4,17 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.util.List;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.gnori.votingsystemrest.model.Item;
 import org.hibernate.validator.constraints.Length;
 
 @Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class MenuDto {
 
   Integer id;

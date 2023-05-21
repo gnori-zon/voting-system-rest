@@ -36,9 +36,11 @@ public class MenuService extends AbstractService<MenuEntity, MenuDao> {
         .getLaunchMenu();
 
     if (menu == null) {
+
       throw  new NotFoundException(
           String.format("menu from restaurant with id: %d is not exist", restaurantId),
           HttpStatus.NOT_FOUND);
+
     }
 
     return menuFactory.convertFrom(menu);
@@ -46,7 +48,9 @@ public class MenuService extends AbstractService<MenuEntity, MenuDao> {
   }
 
   public List<MenuDto> getAllMenuDto() {
+
     return menuFactory.convertListFrom(getAll());
+
   }
 
   public MenuDto createForRestaurant(Integer restaurantId, MenuDto menuDto) {
@@ -55,18 +59,23 @@ public class MenuService extends AbstractService<MenuEntity, MenuDao> {
         restaurantEntity -> {
 
           if (restaurantDao.isExistsMenu(restaurantId)) {
+
             throw new ConflictException(
                 String.format("menu from restaurant with id: %d is already exist", restaurantId),
                 HttpStatus.CONFLICT);
+
           }
 
           var menu = create(menuFactory.convertFrom(menuDto));
+
           restaurantEntity.setLaunchMenu(menu);
           restaurantEntity.setUpdateMenuDate(LocalDate.now());
+
           restaurantDao.save(restaurantEntity);
 
           menuDto.setId(menu.getId());
           return menuDto;
+
         }
     ).orElseThrow(
         () -> new NotFoundException(
@@ -80,6 +89,7 @@ public class MenuService extends AbstractService<MenuEntity, MenuDao> {
 
     return restaurantDao.findById(restaurantId).map(
         restaurantEntity -> {
+
           var menuEntity = menuFactory.convertFrom(menuDto);
           restaurantEntity.setUpdateMenuDate(LocalDate.now());
 
@@ -106,13 +116,17 @@ public class MenuService extends AbstractService<MenuEntity, MenuDao> {
 
     restaurantDao.findById(restaurantId).ifPresent(
         restaurantEntity -> {
+
           var menu = restaurantEntity.getLaunchMenu();
+
           restaurantEntity.setUpdateMenuDate(null);
           restaurantEntity.setLaunchMenu(null);
           restaurantDao.save(restaurantEntity);
+
           if (menu != null) {
             delete(menu.getId());
           }
+
         }
     );
 

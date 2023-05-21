@@ -2,12 +2,14 @@ package org.gnori.votingsystemrest.service.impl;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 import org.gnori.votingsystemrest.dao.impl.RestaurantDao;
 import org.gnori.votingsystemrest.dao.impl.UserDao;
 import org.gnori.votingsystemrest.error.BadRequestException;
 import org.gnori.votingsystemrest.error.NotFoundException;
 import org.gnori.votingsystemrest.factory.RestaurantFactory;
 import org.gnori.votingsystemrest.model.dto.RestaurantDto;
+import org.gnori.votingsystemrest.model.entity.RestaurantEntity;
 import org.gnori.votingsystemrest.model.entity.UserEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -15,19 +17,16 @@ import org.springframework.stereotype.Service;
 @Service
 public class VoteService {
 
-  private final UserService userService;
   private final UserDao userDao;
   private final RestaurantDao restaurantDao;
   private final RestaurantFactory restaurantFactory;
 
   public VoteService(
       UserDao userDao,
-      UserService userService,
       RestaurantDao restaurantDao,
       RestaurantFactory restaurantFactory) {
 
     this.userDao = userDao;
-    this.userService = userService;
     this.restaurantDao = restaurantDao;
     this.restaurantFactory = restaurantFactory;
 
@@ -50,9 +49,18 @@ public class VoteService {
 
   }
 
-  public RestaurantDto createVote(Integer userId, Integer restaurantId) {
-    validateTimeVote(LocalTime.of(11,0));
+  public List<RestaurantDto> getAllVotes() {
 
+    return restaurantDao.findAllVotes()
+        .stream()
+        .map(array -> new RestaurantDto((RestaurantEntity) array[0], (Long) array[1]))
+        .toList();
+
+  }
+
+  public RestaurantDto createVote(Integer userId, Integer restaurantId) {
+
+    validateTimeVote(LocalTime.of(11,0));
     var user = validateAndGetUser(userId);
 
     if (LocalDate.now().equals(user.getDateVote())) {
@@ -62,7 +70,6 @@ public class VoteService {
     }
 
     validateRestaurant(restaurantId, LocalDate.now());
-
     updateUserVoteParams(user, restaurantId, LocalDate.now());
 
     return prepareRestaurantDto(restaurantId);
@@ -72,11 +79,8 @@ public class VoteService {
   public RestaurantDto updateVote(Integer userId, Integer restaurantId) {
 
     validateTimeVote(LocalTime.of(11,0));
-
     var user = validateAndGetUser(userId);
-
     validateRestaurant(restaurantId, LocalDate.now());
-
     updateUserVoteParams(user, restaurantId, LocalDate.now());
 
     return prepareRestaurantDto(restaurantId);
@@ -97,8 +101,8 @@ public class VoteService {
             String.format("restaurant with id: %d is not exist", restaurantId),
             HttpStatus.NOT_FOUND)
     );
-    var restaurantDto = restaurantFactory.convertFrom(restaurant);
 
+    var restaurantDto = restaurantFactory.convertFrom(restaurant);
     var numberOfVotes = userDao.countByVotedForAndDateVoteEquals(restaurantId, LocalDate.now());
 
     restaurantDto.setNumberOfVotes(numberOfVotes);
@@ -129,7 +133,7 @@ public class VoteService {
 
   private UserEntity validateAndGetUser(Integer userId) {
 
-    return userService.get(userId).orElseThrow(
+    return userDao.findById(userId).orElseThrow(
         () -> new NotFoundException(
             String.format("user with id: %d is not exist", userId),
             HttpStatus.NOT_FOUND)
@@ -144,4 +148,5 @@ public class VoteService {
     userDao.saveAndFlush(user);
 
   }
+
 }

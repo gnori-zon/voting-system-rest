@@ -11,13 +11,19 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface RestaurantDao extends BaseDao<RestaurantEntity> {
 
-  @Query(nativeQuery = true, value = "select r.launch_menu_id is not null from restaurant as r where r.id = :id")
+  @Query(nativeQuery = true,
+      value = "select r.launch_menu_id is not null "
+          + "from restaurant as r "
+          + "where r.id = :id")
   boolean isExistsMenu(@Param("id") Integer id);
 
   boolean existsByName(String name);
 
-  List<RestaurantEntity> findAllByUpdateMenuDateEquals(LocalDate updateMenuDate);
-
   boolean existsByIdAndUpdateMenuDateEquals(Integer id, LocalDate updateMenuDate);
+
+  @Query("select r , (select count(*) from UserEntity as u where u.votedFor = r.id and u.dateVote = current_date) "
+          + "from RestaurantEntity as r "
+          + "where r.updateMenuDate = current_date")
+  List<Object[]> findAllVotes();
 
 }
