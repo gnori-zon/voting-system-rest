@@ -21,9 +21,9 @@ public class MenuDto {
 
   @NotBlank(message = "field 'name' must be not empty")
   @Length(max = 128, message = "field's 'name' length must be <= 128")
-  private String name;
+  protected String name;
 
   @NotNull(message = "field 'itemList' must be not null")
   @Size(min = 1, max = 10, message = "field's 'itemList' size must be in interval [1; 10]")
-  private List<Item> itemList;
+  protected List<Item> itemList;
 }

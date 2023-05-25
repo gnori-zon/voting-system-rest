@@ -7,9 +7,8 @@ import org.gnori.votingsystemrest.dao.impl.RestaurantDao;
 import org.gnori.votingsystemrest.dao.impl.UserDao;
 import org.gnori.votingsystemrest.error.BadRequestException;
 import org.gnori.votingsystemrest.error.NotFoundException;
-import org.gnori.votingsystemrest.factory.RestaurantFactory;
-import org.gnori.votingsystemrest.model.dto.RestaurantDto;
-import org.gnori.votingsystemrest.model.entity.RestaurantEntity;
+import org.gnori.votingsystemrest.factory.VoteFactory;
+import org.gnori.votingsystemrest.model.dto.VoteDto;
 import org.gnori.votingsystemrest.model.entity.UserEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -19,21 +18,21 @@ public class VoteService {
 
   private final UserDao userDao;
   private final RestaurantDao restaurantDao;
-  private final RestaurantFactory restaurantFactory;
+  private final VoteFactory voteFactory;
 
   public VoteService(
       UserDao userDao,
       RestaurantDao restaurantDao,
-      RestaurantFactory restaurantFactory) {
+      VoteFactory voteFactory) {
 
     this.userDao = userDao;
     this.restaurantDao = restaurantDao;
-    this.restaurantFactory = restaurantFactory;
+    this.voteFactory = voteFactory;
 
   }
 
 
-  public RestaurantDto getVote(Integer userId) {
+  public VoteDto getVote(Integer userId) {
 
     var user = validateAndGetUser(userId);
 
@@ -45,20 +44,17 @@ public class VoteService {
 
     }
 
-    return prepareRestaurantDto(user.getVotedFor());
+    return prepareVoteDtoByRestaurantId(user.getVotedFor());
 
   }
 
-  public List<RestaurantDto> getAllVotes() {
+  public List<VoteDto> getAllVotes() {
 
-    return restaurantDao.findAllVotes()
-        .stream()
-        .map(array -> new RestaurantDto((RestaurantEntity) array[0], (Long) array[1]))
-        .toList();
+    return restaurantDao.findAllVotes();
 
   }
 
-  public RestaurantDto createVote(Integer userId, Integer restaurantId) {
+  public VoteDto createVote(Integer userId, Integer restaurantId) {
 
     validateTimeVote(LocalTime.of(11,0));
     var user = validateAndGetUser(userId);
@@ -72,18 +68,18 @@ public class VoteService {
     validateRestaurant(restaurantId, LocalDate.now());
     updateUserVoteParams(user, restaurantId, LocalDate.now());
 
-    return prepareRestaurantDto(restaurantId);
+    return prepareVoteDtoByRestaurantId(restaurantId);
 
   }
 
-  public RestaurantDto updateVote(Integer userId, Integer restaurantId) {
+  public VoteDto updateVote(Integer userId, Integer restaurantId) {
 
     validateTimeVote(LocalTime.of(11,0));
     var user = validateAndGetUser(userId);
     validateRestaurant(restaurantId, LocalDate.now());
     updateUserVoteParams(user, restaurantId, LocalDate.now());
 
-    return prepareRestaurantDto(restaurantId);
+    return prepareVoteDtoByRestaurantId(restaurantId);
 
   }
 
@@ -94,20 +90,16 @@ public class VoteService {
   }
 
   // utils
-  private RestaurantDto prepareRestaurantDto(Integer restaurantId) {
+  private VoteDto prepareVoteDtoByRestaurantId(Integer restaurantId) {
 
     var restaurant = restaurantDao.findById(restaurantId).orElseThrow(
         () -> new NotFoundException(
             String.format("restaurant with id: %d is not exist", restaurantId),
             HttpStatus.NOT_FOUND)
     );
-
-    var restaurantDto = restaurantFactory.convertFrom(restaurant);
     var numberOfVotes = userDao.countByVotedForAndDateVoteEquals(restaurantId, LocalDate.now());
 
-    restaurantDto.setNumberOfVotes(numberOfVotes);
-
-    return restaurantDto;
+    return voteFactory.convertFrom(restaurant, numberOfVotes);
 
   }
 

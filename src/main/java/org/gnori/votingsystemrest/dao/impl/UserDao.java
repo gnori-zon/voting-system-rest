@@ -9,4 +9,6 @@ import org.springframework.stereotype.Repository;
 public interface UserDao extends BaseDao<UserEntity> {
 
   Integer countByVotedForAndDateVoteEquals(Integer votedFor, LocalDate dateVote);
+
+  boolean existsByUsername(String username);
 }
