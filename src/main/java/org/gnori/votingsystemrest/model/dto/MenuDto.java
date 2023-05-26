@@ -17,7 +17,7 @@ import org.hibernate.validator.constraints.Length;
 @AllArgsConstructor
 public class MenuDto {
 
-  Integer id;
+  protected Integer id;
 
   @NotBlank(message = "field 'name' must be not empty")
   @Length(max = 128, message = "field's 'name' length must be <= 128")
@@ -26,4 +26,5 @@ public class MenuDto {
   @NotNull(message = "field 'itemList' must be not null")
   @Size(min = 1, max = 10, message = "field's 'itemList' size must be in interval [1; 10]")
   protected List<Item> itemList;
+
 }

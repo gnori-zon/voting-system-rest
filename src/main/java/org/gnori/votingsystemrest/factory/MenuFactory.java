@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class MenuFactory {
+public class MenuFactory implements BaseFactory<MenuDto, MenuEntity>{
 
   public MenuDto convertFrom(MenuEntity menuEntity) {
 

@@ -8,13 +8,17 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class UserForAdminFactory {
+public class UserForAdminFactory implements BaseFactory<UserForAdminDto, UserEntity> {
 
   private final UserFactory userFactory;
 
   public UserForAdminDto convertFrom(UserEntity userEntity) {
 
-    var userForAdminDto = (UserForAdminDto) userFactory.convertFrom(userEntity);
+    var userForAdminDto = new UserForAdminDto();
+    userForAdminDto.setId(userEntity.getId());
+    userForAdminDto.setUsername(userEntity.getUsername());
+    userForAdminDto.setPassword(userEntity.getPassword());
+    userForAdminDto.setRoles(userEntity.getRoles());
     userForAdminDto.setVotedFor(userEntity.getVotedFor());
     userForAdminDto.setDateVote(userEntity.getDateVote());
     return userForAdminDto;

@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class RestaurantFactory {
+public class RestaurantFactory implements BaseFactory<RestaurantDto, RestaurantEntity> {
 
   private final MenuFactory menuFactory;
 

@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class UserFactory {
+public class UserFactory implements BaseFactory<UserDto, UserEntity>{
 
   public UserDto convertFrom(UserEntity userEntity) {
 

@@ -8,9 +8,10 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserForAdminDto extends UserDto{
+public class UserForAdminDto extends UserDto {
 
   protected Integer votedFor;
 
   protected LocalDate dateVote;
+
 }
