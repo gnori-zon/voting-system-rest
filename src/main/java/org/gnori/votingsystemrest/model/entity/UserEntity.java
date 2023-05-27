@@ -11,6 +11,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.Set;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -21,6 +22,9 @@ import lombok.Setter;
 import org.gnori.votingsystemrest.model.entity.enums.Role;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 @Entity
 @Getter
@@ -29,7 +33,7 @@ import org.hibernate.annotations.OnDeleteAction;
 @AllArgsConstructor
 @Table(name = "users")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class UserEntity extends BaseEntity{
+public class UserEntity extends BaseEntity implements UserDetails  {
 
   @Column(unique = true, length = 128, nullable = false)
   private String username;
@@ -52,4 +56,33 @@ public class UserEntity extends BaseEntity{
 
   @Column(name = "date_vote")
   private LocalDate dateVote;
+
+  @Override
+  public Collection<? extends GrantedAuthority> getAuthorities() {
+
+    return roles.stream()
+            .map(role -> new SimpleGrantedAuthority(role.name()))
+            .toList();
+
+  }
+
+  @Override
+  public boolean isAccountNonExpired() {
+    return true;
+  }
+
+  @Override
+  public boolean isAccountNonLocked() {
+    return true;
+  }
+
+  @Override
+  public boolean isCredentialsNonExpired() {
+    return true;
+  }
+
+  @Override
+  public boolean isEnabled() {
+    return true;
+  }
 }
