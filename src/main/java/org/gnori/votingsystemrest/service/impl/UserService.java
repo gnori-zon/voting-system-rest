@@ -141,6 +141,7 @@ public class UserService extends AbstractService<UserEntity, UserDao> {
     return userFactory.convertFrom(
         update(userId, userEntity).orElse(null)
     );
+
   }
 
   public void deleteByIdAndUserName(Integer userId, String username) {
