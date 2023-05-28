@@ -6,7 +6,6 @@ import org.gnori.votingsystemrest.model.dto.UserDto;
 import org.gnori.votingsystemrest.service.impl.UserService;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -46,6 +45,14 @@ public class AuthenticationService {
   public String getUsername(String token) {
 
     return jwtService.extractUsername(token);
+
+  }
+
+  public String generateNewToken(UserDto userDto){
+
+    var user = userService.getByUsername(userDto.getUsername());
+
+    return jwtService.generateToken(user);
 
   }
 

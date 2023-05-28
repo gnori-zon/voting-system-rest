@@ -1,6 +1,5 @@
 package org.gnori.votingsystemrest.controller;
 
-import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -10,6 +9,7 @@ import org.gnori.votingsystemrest.service.impl.UserService;
 import org.gnori.votingsystemrest.service.security.AuthenticationService;
 import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -46,7 +46,7 @@ public class UserController {
 
   @ResponseStatus(HttpStatus.CREATED)
   @PostMapping(USER_URL)
-  public LoginDetails register(@RequestBody @Valid UserDto userDto) {
+  public LoginDetails register(@Validated @RequestBody UserDto userDto) {
 
     return authenticationService.register(userDto);
 
@@ -54,7 +54,7 @@ public class UserController {
 
   @ResponseStatus(HttpStatus.OK)
   @PutMapping(AUTH_URL)
-  public LoginDetails authenticateAndUpdateToken(@RequestBody UserDto userDto) {
+  public LoginDetails authenticateAndUpdateToken(@Validated @RequestBody UserDto userDto) {
 
     return authenticationService.authenticateAndUpdateToken(userDto);
 
@@ -66,7 +66,13 @@ public class UserController {
 
     var username = authenticationService.getUsername(userDto.getToken());
 
-    return userService.updateByIdAndUsername(userId, username, userDto);
+    var responseDto = userService.updateByIdAndUsername(userId, username, userDto);
+
+    var newToken = authenticationService.generateNewToken(responseDto);
+
+    responseDto.setToken(newToken);
+
+    return responseDto;
 
   }
 
@@ -77,6 +83,7 @@ public class UserController {
     var username = authenticationService.getUsername(loginDetails.getToken());
 
     userService.deleteByIdAndUserName(userId, username);
+
   }
 
 

@@ -9,6 +9,7 @@ import org.gnori.votingsystemrest.service.impl.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -48,7 +49,7 @@ public class AdminUserController {
 
   @ResponseStatus(HttpStatus.CREATED)
   @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-  public UserForAdminDto create(@RequestBody UserForAdminDto userForAdminDto) {
+  public UserForAdminDto create(@Validated @RequestBody UserForAdminDto userForAdminDto) {
 
     return userService.createFromUserForAdminDto(userForAdminDto);
 

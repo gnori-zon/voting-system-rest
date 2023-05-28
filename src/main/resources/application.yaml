@@ -1,1 +1,15 @@
+spring:
+  datasource:
+    url: ___
+    username: ___
+    password: ___
+    driver-class-name: ___
+  jpa:
+    show-sql: ___
+    hibernate.ddl-auto: ___
 
+security:
+  jwt:
+    secret: ___
+#    seconds
+    expiration: ___
