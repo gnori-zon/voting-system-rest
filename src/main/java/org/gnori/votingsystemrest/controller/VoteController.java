@@ -26,7 +26,6 @@ import org.springframework.web.bind.annotation.RestController;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class VoteController {
 
-
   public static final String USER_VOTE_URL = "/users/{userId}/vote";
   public static final String VOTES_URL = "/votes";
 

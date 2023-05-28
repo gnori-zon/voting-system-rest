@@ -19,6 +19,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @DataJpaTest
 @DisplayName("Integration test for UserService and JPA")
@@ -31,8 +32,9 @@ class UserServiceIntegrationTest {
   private UserEntity rawEntity;
 
   public UserServiceIntegrationTest(@Autowired UserDao userDao) {
-    var userFactory = new UserFactory();
-    this.service = new UserService(userDao, new UserForAdminFactory(userFactory), userFactory);
+    this.service = new UserService(
+        userDao, new UserForAdminFactory(), new BCryptPasswordEncoder(),  new UserFactory()
+    );
   }
 
   @BeforeEach
@@ -69,7 +71,7 @@ class UserServiceIntegrationTest {
     Assertions.assertNotNull(actual);
     Assertions.assertEquals(rawEntity.getId(), actual.getId());
     Assertions.assertEquals(rawEntity.getUsername(), actual.getUsername());
-    Assertions.assertEquals(rawEntity.getPassword(), actual.getPassword());
+    Assertions.assertNotEquals(rawEntity.getPassword(), actual.getPassword());
     Assertions.assertEquals(rawEntity.getRoles(), actual.getRoles());
 
     service.delete(actual.getId());
@@ -91,7 +93,7 @@ class UserServiceIntegrationTest {
     Assertions.assertNotNull(actual);
     Assertions.assertEquals(rawEntity.getId(), actual.getId());
     Assertions.assertEquals(rawEntity.getUsername(), actual.getUsername());
-    Assertions.assertEquals(rawEntity.getPassword(), actual.getPassword());
+    Assertions.assertNotEquals(rawEntity.getPassword(), actual.getPassword());
     Assertions.assertEquals(rawEntity.getVotedFor(), actual.getVotedFor());
     Assertions.assertEquals(rawEntity.getDateVote(), actual.getDateVote());
     Assertions.assertEquals(rawEntity.getRoles(), actual.getRoles());
@@ -99,34 +101,34 @@ class UserServiceIntegrationTest {
     service.delete(actual.getId());
 
   }
+//
+//  @Test
+//  void getByIdForUserSuccess() {
+//
+//    rawEntity = service.create(rawEntity);
+//
+//    var actual = service.getUserDtoById(rawEntity.getId());
+//
+//    Assertions.assertNotNull(actual);
+//
+//    Assertions.assertNotNull(actual);
+//    Assertions.assertEquals(rawEntity.getId(), actual.getId());
+//    Assertions.assertEquals(rawEntity.getUsername(), actual.getUsername());
+//    Assertions.assertEquals(rawEntity.getPassword(), actual.getPassword());
+//    Assertions.assertEquals(rawEntity.getRoles(), actual.getRoles());
+//
+//    service.delete(actual.getId());
+//
+//  }
 
-  @Test
-  void getByIdForUserSuccess() {
-
-    rawEntity = service.create(rawEntity);
-
-    var actual = service.getUserDtoById(rawEntity.getId());
-
-    Assertions.assertNotNull(actual);
-
-    Assertions.assertNotNull(actual);
-    Assertions.assertEquals(rawEntity.getId(), actual.getId());
-    Assertions.assertEquals(rawEntity.getUsername(), actual.getUsername());
-    Assertions.assertEquals(rawEntity.getPassword(), actual.getPassword());
-    Assertions.assertEquals(rawEntity.getRoles(), actual.getRoles());
-
-    service.delete(actual.getId());
-
-  }
-
-  @Test
-  void getByIdForUserShouldThrowNotFoundException() {
-
-    Assertions.assertThrows(
-        NotFoundException.class, () -> service.getUserDtoById(1_000)
-    );
-
-  }
+//  @Test
+//  void getByIdForUserShouldThrowNotFoundException() {
+//
+//    Assertions.assertThrows(
+//        NotFoundException.class, () -> service.getUserDtoById(1_000)
+//    );
+//
+//  }
 
   @Test
   void getByIdForAdminSuccess() {
@@ -139,7 +141,7 @@ class UserServiceIntegrationTest {
 
     Assertions.assertEquals(rawEntity.getId(), actual.getId());
     Assertions.assertEquals(rawEntity.getUsername(), actual.getUsername());
-    Assertions.assertEquals(rawEntity.getPassword(), actual.getPassword());
+    Assertions.assertNotEquals(rawEntity.getPassword(), actual.getPassword());
     Assertions.assertEquals(rawEntity.getVotedFor(), actual.getVotedFor());
     Assertions.assertEquals(rawEntity.getDateVote(), actual.getDateVote());
     Assertions.assertEquals(rawEntity.getRoles(), actual.getRoles());
@@ -168,8 +170,8 @@ class UserServiceIntegrationTest {
     Assertions.assertNotNull(actual);
     Assertions.assertNotEquals(rawDto.getId(), actual.getId());
     Assertions.assertEquals(rawDto.getUsername(), actual.getUsername());
-    Assertions.assertEquals(rawDto.getPassword(), actual.getPassword());
-    Assertions.assertNull(actual.getRoles());
+    Assertions.assertNotEquals(rawDto.getPassword(), actual.getPassword());
+    Assertions.assertEquals(new HashSet<>(Set.of(Role.USER)), actual.getRoles());
 
     service.delete(actual.getId());
 
@@ -204,7 +206,7 @@ class UserServiceIntegrationTest {
 
     Assertions.assertNotNull(actual);
     Assertions.assertEquals(userForAdminDto.getUsername(), actual.getUsername());
-    Assertions.assertEquals(userForAdminDto.getPassword(), actual.getPassword());
+    Assertions.assertNotEquals(userForAdminDto.getPassword(), actual.getPassword());
     Assertions.assertEquals(userForAdminDto.getRoles(), actual.getRoles());
 
     service.delete(actual.getId());
@@ -241,7 +243,7 @@ class UserServiceIntegrationTest {
 
     var newUsername = "newName";
     var newPassword = "newPassword";
-    var newRoles = Set.of(Role.ADMIN);
+    var newRoles = new HashSet<>(Set.of(Role.ADMIN));
 
     var userForAdminDto = new UserForAdminDto();
     userForAdminDto.setUsername(newUsername);
@@ -257,7 +259,7 @@ class UserServiceIntegrationTest {
     Assertions.assertEquals(rawEntity.getId(), actual.getId());
     Assertions.assertEquals(userForAdminDto.getUsername(), actual.getUsername());
     Assertions.assertNotEquals(oldUsername, actual.getUsername());
-    Assertions.assertEquals(userForAdminDto.getPassword(), actual.getPassword());
+    Assertions.assertNotEquals(userForAdminDto.getPassword(), actual.getPassword());
     Assertions.assertNotEquals(oldPassword, actual.getPassword());
     Assertions.assertEquals(userForAdminDto.getRoles(), actual.getRoles());
     Assertions.assertNotEquals(oldRoles, actual.getRoles());

@@ -53,7 +53,6 @@ class UserFactoryTest extends AbstractFactoryTest<UserDto, UserEntity> {
     var expectedValue = UserDto.builder()
         .id(raw.getId())
         .username(raw.getUsername())
-        .password(raw.getPassword())
         .roles(raw.getRoles())
         .build();
 
@@ -87,14 +86,12 @@ class UserFactoryTest extends AbstractFactoryTest<UserDto, UserEntity> {
     var dto1 = UserDto.builder()
         .id(entity1.getId())
         .username(entity1.getUsername())
-        .password(entity1.getPassword())
         .roles(entity1.getRoles())
         .build();
 
     var dto2 =UserDto.builder()
         .id(entity2.getId())
         .username(entity2.getUsername())
-        .password(entity2.getPassword())
         .roles(entity2.getRoles())
         .build();
 

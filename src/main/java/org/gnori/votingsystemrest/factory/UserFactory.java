@@ -12,11 +12,12 @@ public class UserFactory implements BaseFactory<UserDto, UserEntity>{
 
   public UserDto convertFrom(UserEntity userEntity) {
 
+    if (userEntity == null) return null;
+
     return UserDto
         .builder()
         .id(userEntity.getId())
         .username(userEntity.getUsername())
-        .password(userEntity.getPassword())
         .roles(userEntity.getRoles())
         .build();
   }
@@ -28,6 +29,8 @@ public class UserFactory implements BaseFactory<UserDto, UserEntity>{
   }
 
   public UserEntity convertFrom(UserDto userDto) {
+
+    if (userDto == null) return null;
 
     return UserEntity.builder()
         .username(userDto.getUsername())

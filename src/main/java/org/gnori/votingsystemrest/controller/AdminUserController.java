@@ -26,9 +26,9 @@ import org.springframework.web.bind.annotation.RestController;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class AdminUserController {
 
-  UserService userService;
-
   public static final String ADMIN_USERS_WITH_ID_URL = "/{userId}";
+
+  UserService userService;
 
   @ResponseStatus(HttpStatus.OK)
   @GetMapping(value = ADMIN_USERS_WITH_ID_URL, produces = MediaType.APPLICATION_JSON_VALUE)

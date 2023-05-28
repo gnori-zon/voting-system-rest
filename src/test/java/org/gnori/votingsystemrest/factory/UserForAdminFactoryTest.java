@@ -16,7 +16,7 @@ import org.junit.jupiter.api.Test;
 class UserForAdminFactoryTest extends AbstractFactoryTest<UserForAdminDto, UserEntity> {
 
   UserForAdminFactoryTest() {
-    super(new UserForAdminFactory(new UserFactory()));
+    super(new UserForAdminFactory());
   }
 
   @Test
@@ -53,7 +53,6 @@ class UserForAdminFactoryTest extends AbstractFactoryTest<UserForAdminDto, UserE
     var expectedValue = new UserForAdminDto();
     expectedValue.setId(raw.getId());
     expectedValue.setUsername(raw.getUsername());
-    expectedValue.setPassword(raw.getPassword());
     expectedValue.setRoles(raw.getRoles());
     expectedValue.setVotedFor(raw.getVotedFor());
     expectedValue.setDateVote(raw.getDateVote());
