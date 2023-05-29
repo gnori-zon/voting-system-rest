@@ -38,17 +38,23 @@ public class UserController {
   @GetMapping(USER_WITH_ID_URL)
   public UserDto get(@PathVariable Integer userId, @RequestBody LoginDetails loginDetails){
 
-    var username = authenticationService.getUsername(loginDetails.getToken());
+    authenticationService.validatePermission(userId, loginDetails.getToken());
 
-    return userService.getUserDtoByIdAndUsername(userId, username);
+    return userService.getUserDtoById(userId);
 
   }
 
   @ResponseStatus(HttpStatus.CREATED)
   @PostMapping(USER_URL)
-  public LoginDetails register(@Validated @RequestBody UserDto userDto) {
+  public UserDto register(@Validated @RequestBody UserDto userDto) {
 
-    return authenticationService.register(userDto);
+    var responseDto = userService.createFromUserDto(userDto);
+
+    var token = authenticationService.generateNewToken(userDto);
+
+    responseDto.setToken(token);
+
+    return responseDto;
 
   }
 
@@ -64,9 +70,9 @@ public class UserController {
   @PutMapping(USER_WITH_ID_URL)
   public UserDto update(@PathVariable Integer userId, @RequestBody UserDto userDto){
 
-    var username = authenticationService.getUsername(userDto.getToken());
+    authenticationService.validatePermission(userId, userDto.getToken());
 
-    var responseDto = userService.updateByIdAndUsername(userId, username, userDto);
+    var responseDto = userService.updateByIdFromUserDto(userId, userDto);
 
     var newToken = authenticationService.generateNewToken(responseDto);
 
@@ -80,9 +86,9 @@ public class UserController {
   @DeleteMapping(USER_WITH_ID_URL)
   public void delete(@PathVariable Integer userId, @RequestBody LoginDetails loginDetails){
 
-    var username = authenticationService.getUsername(loginDetails.getToken());
+    authenticationService.validatePermission(userId, loginDetails.getToken());
 
-    userService.deleteByIdAndUserName(userId, username);
+    userService.deleteById(userId);
 
   }
 

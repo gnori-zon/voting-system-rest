@@ -5,7 +5,6 @@ import java.util.HashSet;
 import java.util.Set;
 import org.gnori.votingsystemrest.dao.impl.UserDao;
 import org.gnori.votingsystemrest.error.ConflictException;
-import org.gnori.votingsystemrest.error.ForbiddenException;
 import org.gnori.votingsystemrest.error.NotFoundException;
 import org.gnori.votingsystemrest.factory.UserFactory;
 import org.gnori.votingsystemrest.factory.UserForAdminFactory;
@@ -108,7 +107,7 @@ class UserServiceIntegrationTest {
 
     rawEntity = service.create(rawEntity);
 
-    var actual = service.getUserDtoByIdAndUsername(rawEntity.getId(), rawEntity.getUsername());
+    var actual = service.getUserDtoById(rawEntity.getId());
 
     Assertions.assertNotNull(actual);
 
@@ -126,24 +125,8 @@ class UserServiceIntegrationTest {
   void getByIdAndUsernameForUserShouldThrowNotFoundException() {
 
     Assertions.assertThrows(
-        NotFoundException.class, () -> service.getUserDtoByIdAndUsername(1_000, "username")
+        NotFoundException.class, () -> service.getUserDtoById(1_000)
     );
-
-  }
-
-  @Test
-  void getByIdAndUsernameForUserShouldThrowForbiddenException() {
-
-    rawEntity = service.create(rawEntity);
-
-    var actual = service.getUserDtoByIdAndUsername(rawEntity.getId(), rawEntity.getUsername());
-
-    Assertions.assertThrows(
-        ForbiddenException.class,
-        () -> service.getUserDtoByIdAndUsername(actual.getId(), "no" + rawEntity.getUsername())
-    );
-
-    service.delete(actual.getId());
 
   }
 
@@ -369,7 +352,7 @@ class UserServiceIntegrationTest {
         .password(newPassword)
         .build();
 
-    var actual = service.updateByIdAndUsername(rawEntity.getId(), rawEntity.getUsername(), userDto);
+    var actual = service.updateByIdFromUserDto(rawEntity.getId(), userDto);
 
     Assertions.assertNotNull(actual);
 
@@ -388,19 +371,7 @@ class UserServiceIntegrationTest {
   void updateFromUserForUserDtoShouldThrowNotFoundException() {
 
     Assertions.assertThrows(NotFoundException.class,
-        () -> service.updateByIdAndUsername(1_000, "username", new UserDto()));
-
-  }
-
-  @Test
-  void updateFromUserForUserDtoShouldThrowForbiddenException() {
-
-    rawEntity = service.create(rawEntity);
-
-    Assertions.assertThrows(ForbiddenException.class,
-        () -> service.updateByIdAndUsername(rawEntity.getId(), "username", new UserDto()));
-
-    service.delete(rawEntity.getId());
+        () -> service.updateByIdFromUserDto(1_000, new UserDto()));
 
   }
 
@@ -421,7 +392,7 @@ class UserServiceIntegrationTest {
         .build();
 
     Assertions.assertThrows(ConflictException.class,
-        () -> service.updateByIdAndUsername(rawEntity.getId(), rawEntity.getUsername(), newUserDto));
+        () -> service.updateByIdFromUserDto(rawEntity.getId(), newUserDto));
 
 
     service.delete(rawEntity.getId());
@@ -433,29 +404,10 @@ class UserServiceIntegrationTest {
 
     rawEntity = service.create(rawEntity);
 
-    service.deleteByIdAndUserName(rawEntity.getId(), rawEntity.getUsername());
+    service.deleteById(rawEntity.getId());
 
     Assertions.assertTrue(service.getAll().isEmpty());
 
-  }
-
-  @Test
-  void deleteByIdAndUserNameShouldThrowForbidden(){
-
-    rawEntity = service.create(rawEntity);
-
-    Assertions.assertThrows(ForbiddenException.class,
-        () -> service.deleteByIdAndUserName(rawEntity.getId(), "username"));
-
-    service.delete(rawEntity.getId());
-
-  }
-
-  @Test
-  void deleteByIdAndUserNameShouldThrowNotFound(){
-
-    Assertions.assertThrows(NotFoundException.class,
-        () -> service.deleteByIdAndUserName(1_000, "username"));
   }
 
 }

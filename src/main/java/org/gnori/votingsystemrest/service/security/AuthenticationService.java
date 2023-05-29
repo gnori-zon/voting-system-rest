@@ -1,6 +1,7 @@
 package org.gnori.votingsystemrest.service.security;
 
 import lombok.RequiredArgsConstructor;
+import org.gnori.votingsystemrest.error.ForbiddenException;
 import org.gnori.votingsystemrest.model.auth.LoginDetails;
 import org.gnori.votingsystemrest.model.dto.UserDto;
 import org.gnori.votingsystemrest.service.impl.UserService;
@@ -16,25 +17,11 @@ public class AuthenticationService {
   private final UserService userService;
   private final AuthenticationManager authenticationManager;
 
-  public LoginDetails register(UserDto userDto) {
-
-    var user = userService.createFromUserDto(userDto);
-
-    var token = jwtService.generateToken(user);
-
-    return LoginDetails.builder()
-        .token(token)
-        .build();
-
-  }
-
   public LoginDetails authenticateAndUpdateToken(UserDto userDto) {
 
     authenticate(userDto);
 
-    var user = userService.getByUsername(userDto.getUsername());
-
-    var token = jwtService.generateToken(user);
+    var token = generateNewToken(userDto);
 
     return LoginDetails.builder()
         .token(token)
@@ -56,13 +43,30 @@ public class AuthenticationService {
 
   }
 
-  public void authenticate(UserDto userDto) {
+  private void authenticate(UserDto userDto) {
+
     authenticationManager.authenticate(
         new UsernamePasswordAuthenticationToken(
             userDto.getUsername(),
             userDto.getPassword()
         )
     );
+
+  }
+
+  public void validatePermission(Integer userId, String token) {
+
+    var user = userService.getUserDtoById(userId);
+
+    var usernameFromToken = getUsername(token);
+
+    if (!usernameFromToken.equals(user.getUsername())) {
+      throw new ForbiddenException(String.format(
+          "You do not have rights to get or change information about the user with id: %d",
+          userId
+      ));
+    }
+
   }
 
 }

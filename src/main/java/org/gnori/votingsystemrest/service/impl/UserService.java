@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Set;
 import org.gnori.votingsystemrest.dao.impl.UserDao;
 import org.gnori.votingsystemrest.error.ConflictException;
-import org.gnori.votingsystemrest.error.ForbiddenException;
 import org.gnori.votingsystemrest.error.NotFoundException;
 import org.gnori.votingsystemrest.factory.UserFactory;
 import org.gnori.votingsystemrest.factory.UserForAdminFactory;
@@ -88,7 +87,7 @@ public class UserService extends AbstractService<UserEntity, UserDao> {
 
   }
 
-  public UserEntity createFromUserDto(UserDto userDto) {
+  public UserDto createFromUserDto(UserDto userDto) {
 
     checkForExistUsername(userDto.getUsername());
 
@@ -98,7 +97,7 @@ public class UserService extends AbstractService<UserEntity, UserDao> {
 
     userEntity.setRoles(new HashSet<>(Set.of(Role.USER)));
 
-    return create(userEntity);
+    return userFactory.convertFrom(create(userEntity));
 
   }
 
@@ -112,22 +111,17 @@ public class UserService extends AbstractService<UserEntity, UserDao> {
     );
   }
 
-
-  public UserDto getUserDtoByIdAndUsername(Integer userId, String username) {
+  public UserDto getUserDtoById(Integer userId) {
 
     var userEntity = getAndValidateById(userId);
-
-    validatePermission(userEntity, username);
 
     return userFactory.convertFrom(userEntity);
 
   }
 
-  public UserDto updateByIdAndUsername(Integer userId, String username, UserDto newUserData) {
+  public UserDto updateByIdFromUserDto(Integer userId, UserDto newUserData) {
 
     var userEntity = getAndValidateById(userId);
-
-    validatePermission(userEntity, username);
 
     if (!userEntity.getUsername().equals(newUserData.getUsername())) {
 
@@ -144,25 +138,9 @@ public class UserService extends AbstractService<UserEntity, UserDao> {
 
   }
 
-  public void deleteByIdAndUserName(Integer userId, String username) {
-
-    var userEntity = getAndValidateById(userId);
-
-    validatePermission(userEntity, username);
+  public void deleteById(Integer userId) {
 
     delete(userId);
-
-  }
-
-
-  private void validatePermission(UserEntity userEntity, String username) {
-
-    if (!username.equals(userEntity.getUsername())) {
-      throw new ForbiddenException(String.format(
-          "You do not have rights to get or change information about the user with id: %d",
-          userEntity.getId()
-      ));
-    }
 
   }
 
@@ -176,7 +154,6 @@ public class UserService extends AbstractService<UserEntity, UserDao> {
     );
 
   }
-
 
   private void checkForExistUsername(String username) {
 
