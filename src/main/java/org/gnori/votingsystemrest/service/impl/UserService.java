@@ -60,7 +60,7 @@ public class UserService extends AbstractService<UserEntity, UserDao> {
 
     var userEntity = userForAdminFactory.convertFrom(userForAdminDto);
 
-    userEntity.setPassword(passwordEncoder.encode(userEntity.getPassword()));
+    userEntity.setPassword(passwordEncoder.encode(userForAdminDto.getPassword()));
 
     return userForAdminFactory.convertFrom(create(userEntity));
 
@@ -71,15 +71,23 @@ public class UserService extends AbstractService<UserEntity, UserDao> {
 
     var user = getAndValidateById(userId);
 
-    if (!user.getUsername().equals(userForAdminDto.getUsername())) {
+    if (userForAdminDto.getUsername() != null &&
+        !user.getUsername().equals(userForAdminDto.getUsername())) {
 
       checkForExistUsername(userForAdminDto.getUsername());
 
+      user.setUsername(userForAdminDto.getUsername());
     }
 
-    user.setUsername(userForAdminDto.getUsername());
-    user.setPassword(passwordEncoder.encode(userForAdminDto.getPassword()));
-    user.setRoles(userForAdminDto.getRoles());
+    if (userForAdminDto.getPassword() != null) {
+
+      user.setPassword(passwordEncoder.encode(userForAdminDto.getPassword()));
+    }
+
+    if (userForAdminDto.getRoles() != null && !userForAdminDto.getRoles().isEmpty()) {
+
+      user.setRoles(userForAdminDto.getRoles());
+    }
 
     return userForAdminFactory.convertFrom(
         update(userId, user).orElse(null)
@@ -123,15 +131,17 @@ public class UserService extends AbstractService<UserEntity, UserDao> {
   public UserDto updateByIdFromUserDto(Integer userId, UserDto newUserData) {
 
     var userEntity = getAndValidateById(userId);
-
-    if (!userEntity.getUsername().equals(newUserData.getUsername())) {
+    if (newUserData.getUsername() != null &&
+        !userEntity.getUsername().equals(newUserData.getUsername())) {
 
       checkForExistUsername(newUserData.getUsername());
 
+      userEntity.setUsername(newUserData.getUsername());
     }
 
-    userEntity.setUsername(newUserData.getUsername());
-    userEntity.setPassword(passwordEncoder.encode(userEntity.getPassword()));
+    if (newUserData.getPassword() != null) {
+      userEntity.setPassword(passwordEncoder.encode(newUserData.getPassword()));
+    }
 
     return userFactory.convertFrom(
         update(userId, userEntity).orElse(null)
