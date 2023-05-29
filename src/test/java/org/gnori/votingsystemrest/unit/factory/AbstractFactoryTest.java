@@ -1,6 +1,7 @@
-package org.gnori.votingsystemrest.factory;
+package org.gnori.votingsystemrest.unit.factory;
 
 import java.util.List;
+import org.gnori.votingsystemrest.factory.BaseFactory;
 import org.gnori.votingsystemrest.model.entity.BaseEntity;
 import org.junit.jupiter.api.Assertions;
 

@@ -109,6 +109,7 @@ public class UserService extends AbstractService<UserEntity, UserDao> {
             HttpStatus.NOT_FOUND
         )
     );
+
   }
 
   public UserDto getUserDtoById(Integer userId) {

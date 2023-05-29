@@ -1,9 +1,10 @@
-package org.gnori.votingsystemrest.factory;
+package org.gnori.votingsystemrest.unit.factory;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import org.gnori.votingsystemrest.factory.VoteFactory;
 import org.gnori.votingsystemrest.model.Item;
 import org.gnori.votingsystemrest.model.dto.VoteDto;
 import org.gnori.votingsystemrest.model.entity.MenuEntity;

@@ -1,4 +1,4 @@
-package org.gnori.votingsystemrest.service.security;
+package org.gnori.votingsystemrest.service.security.impl;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -18,10 +18,10 @@ import org.springframework.stereotype.Service;
 public class JwtService {
 
   @Value("${security.jwt.secret}")
-  private String SECRET_KEY;
+  private String secretKey;
 
   @Value("${security.jwt.expiration}")
-  private Long EXPIRATION_TOKEN;
+  private Long expirationToken;
 
   public String extractUsername(String token) {
 
@@ -32,6 +32,7 @@ public class JwtService {
   public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
 
     final Claims claims = extractAllClaims(token);
+
     return claimsResolver.apply(claims);
 
   }
@@ -48,24 +49,30 @@ public class JwtService {
         .setClaims(extraClaims)
         .setSubject(userDetails.getUsername())
         .setIssuedAt(new Date(System.currentTimeMillis()))
-        .setExpiration(new Date(System.currentTimeMillis() + 1000 * EXPIRATION_TOKEN))
+        .setExpiration(new Date(System.currentTimeMillis() + 1000 * expirationToken))
         .signWith(getSignKey(), SignatureAlgorithm.HS256)
         .compact();
+
   }
 
   public boolean isTokenValid(String token, UserDetails userDetails) {
 
     final String username = extractUsername(token);
+
     return username.equals(userDetails.getUsername()) && !isTokenExpired(token);
+
   }
 
   private boolean isTokenExpired(String token) {
+
     return extractExpiration(token).before(new Date());
+
   }
 
   private Date extractExpiration(String token) {
 
     return extractClaim(token, Claims::getExpiration);
+
   }
 
   private Claims extractAllClaims(String token) {
@@ -80,7 +87,9 @@ public class JwtService {
 
   private Key getSignKey() {
 
-    var keyBytes = Decoders.BASE64.decode(SECRET_KEY);
+    var keyBytes = Decoders.BASE64.decode(secretKey);
     return Keys.hmacShaKeyFor(keyBytes);
+
   }
+
 }

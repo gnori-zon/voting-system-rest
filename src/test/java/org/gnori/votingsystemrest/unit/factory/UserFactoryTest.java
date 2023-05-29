@@ -1,10 +1,11 @@
-package org.gnori.votingsystemrest.factory;
+package org.gnori.votingsystemrest.unit.factory;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import org.gnori.votingsystemrest.factory.UserFactory;
 import org.gnori.votingsystemrest.model.dto.UserDto;
 import org.gnori.votingsystemrest.model.entity.UserEntity;
 import org.gnori.votingsystemrest.model.entity.enums.Role;

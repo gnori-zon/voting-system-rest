@@ -1,4 +1,4 @@
-package org.gnori.votingsystemrest.service.security;
+package org.gnori.votingsystemrest.service.security.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.gnori.votingsystemrest.dao.impl.UserDao;

@@ -6,7 +6,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import lombok.RequiredArgsConstructor;
-import org.gnori.votingsystemrest.service.security.JwtService;
+import org.gnori.votingsystemrest.service.security.impl.JwtService;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -20,8 +20,8 @@ import org.springframework.web.filter.OncePerRequestFilter;
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-  private final String AUTH_HEADER = "Authorization";
-  private final Integer BEGIN_INDEX_TOKEN = 7;
+  private static final String AUTH_HEADER = "Authorization";
+  private static final Integer BEGIN_INDEX_TOKEN = 7;
 
 
   private final JwtService jwtService;

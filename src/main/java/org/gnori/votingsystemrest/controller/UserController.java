@@ -3,7 +3,6 @@ package org.gnori.votingsystemrest.controller;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.gnori.votingsystemrest.model.auth.LoginDetails;
 import org.gnori.votingsystemrest.model.dto.UserDto;
 import org.gnori.votingsystemrest.service.impl.UserService;
 import org.gnori.votingsystemrest.service.security.AuthenticationService;
@@ -16,6 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -31,14 +31,16 @@ public class UserController {
   public static final String USER_WITH_ID_URL = USER_URL + "/{userId}";
   public static final String AUTH_URL = "/auth";
 
+  private static final String AUTH_HEADER = "Authorization";
+
   UserService userService;
-  AuthenticationService authenticationService;
+  AuthenticationService<UserDto, Integer, String> authenticationService;
 
   @ResponseStatus(HttpStatus.OK)
   @GetMapping(USER_WITH_ID_URL)
-  public UserDto get(@PathVariable Integer userId, @RequestBody LoginDetails loginDetails){
+  public UserDto get(@PathVariable Integer userId, @RequestHeader(AUTH_HEADER) String token){
 
-    authenticationService.validatePermission(userId, loginDetails.getToken());
+    authenticationService.validatePermission(userId, token);
 
     return userService.getUserDtoById(userId);
 
@@ -60,17 +62,23 @@ public class UserController {
 
   @ResponseStatus(HttpStatus.OK)
   @PutMapping(AUTH_URL)
-  public LoginDetails authenticateAndUpdateToken(@Validated @RequestBody UserDto userDto) {
+  public UserDto authenticateAndUpdateToken(@Validated @RequestBody UserDto userDto) {
 
-    return authenticationService.authenticateAndUpdateToken(userDto);
+    authenticationService.authenticate(userDto);
+    var token = authenticationService.generateNewToken(userDto);
+
+    return UserDto.builder()
+        .token(token)
+        .build();
 
   }
 
   @ResponseStatus(HttpStatus.OK)
   @PutMapping(USER_WITH_ID_URL)
-  public UserDto update(@PathVariable Integer userId, @RequestBody UserDto userDto){
+  public UserDto update(@PathVariable Integer userId,
+      @RequestBody UserDto userDto, @RequestHeader(AUTH_HEADER) String token){
 
-    authenticationService.validatePermission(userId, userDto.getToken());
+    authenticationService.validatePermission(userId, token);
 
     var responseDto = userService.updateByIdFromUserDto(userId, userDto);
 
@@ -84,9 +92,9 @@ public class UserController {
 
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @DeleteMapping(USER_WITH_ID_URL)
-  public void delete(@PathVariable Integer userId, @RequestBody LoginDetails loginDetails){
+  public void delete(@PathVariable Integer userId, @RequestHeader(AUTH_HEADER) String token){
 
-    authenticationService.validatePermission(userId, loginDetails.getToken());
+    authenticationService.validatePermission(userId, token);
 
     userService.deleteById(userId);
 
