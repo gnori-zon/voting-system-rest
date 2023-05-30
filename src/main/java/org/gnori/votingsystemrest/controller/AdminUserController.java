@@ -5,6 +5,8 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.gnori.votingsystemrest.model.dto.UserDto;
+import org.gnori.votingsystemrest.model.dto.UserDto.AdvancedValidation;
+import org.gnori.votingsystemrest.model.dto.UserDto.ValidationOfAdmin;
 import org.gnori.votingsystemrest.model.dto.UserForAdminDto;
 import org.gnori.votingsystemrest.service.impl.UserService;
 import org.gnori.votingsystemrest.service.security.AuthenticationService;
@@ -52,7 +54,7 @@ public class AdminUserController {
 
   @ResponseStatus(HttpStatus.CREATED)
   @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-  public UserForAdminDto create(@Validated @RequestBody UserForAdminDto userForAdminDto) {
+  public UserForAdminDto create(@Validated(ValidationOfAdmin.class) @RequestBody UserForAdminDto userForAdminDto) {
 
     var responseDto =  userService.createFromUserForAdminDto(userForAdminDto);
 
@@ -66,7 +68,7 @@ public class AdminUserController {
 
   @ResponseStatus(HttpStatus.OK)
   @PatchMapping(value = ADMIN_USERS_WITH_ID_URL, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-  public UserForAdminDto update(@PathVariable Integer userId, @RequestBody UserForAdminDto userForAdminDto) {
+  public UserForAdminDto update(@PathVariable Integer userId, @Validated(AdvancedValidation.class) @RequestBody UserForAdminDto userForAdminDto) {
 
     var responseDto = userService.updateFromUserForAdminDtoById(userId, userForAdminDto);
 

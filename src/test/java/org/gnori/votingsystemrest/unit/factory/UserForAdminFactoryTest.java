@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import org.gnori.votingsystemrest.factory.UserForAdminFactory;
+import org.gnori.votingsystemrest.factory.impl.UserForAdminFactory;
 import org.gnori.votingsystemrest.model.dto.UserForAdminDto;
 import org.gnori.votingsystemrest.model.entity.UserEntity;
 import org.gnori.votingsystemrest.model.entity.enums.Role;

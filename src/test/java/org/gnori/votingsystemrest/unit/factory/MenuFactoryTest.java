@@ -3,7 +3,7 @@ package org.gnori.votingsystemrest.unit.factory;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import org.gnori.votingsystemrest.factory.MenuFactory;
+import org.gnori.votingsystemrest.factory.impl.MenuFactory;
 import org.gnori.votingsystemrest.model.Item;
 import org.gnori.votingsystemrest.model.dto.MenuDto;
 import org.gnori.votingsystemrest.model.entity.MenuEntity;

@@ -1,7 +1,8 @@
-package org.gnori.votingsystemrest.factory;
+package org.gnori.votingsystemrest.factory.impl;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.gnori.votingsystemrest.factory.BaseFactory;
 import org.gnori.votingsystemrest.model.dto.RestaurantDto;
 import org.gnori.votingsystemrest.model.entity.RestaurantEntity;
 import org.springframework.stereotype.Component;

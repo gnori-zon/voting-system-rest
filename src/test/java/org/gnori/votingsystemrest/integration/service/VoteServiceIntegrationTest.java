@@ -6,7 +6,7 @@ import java.util.List;
 import org.gnori.votingsystemrest.dao.impl.RestaurantDao;
 import org.gnori.votingsystemrest.dao.impl.UserDao;
 import org.gnori.votingsystemrest.error.NotFoundException;
-import org.gnori.votingsystemrest.factory.VoteFactory;
+import org.gnori.votingsystemrest.factory.impl.VoteFactory;
 import org.gnori.votingsystemrest.model.Item;
 import org.gnori.votingsystemrest.model.entity.MenuEntity;
 import org.gnori.votingsystemrest.model.entity.RestaurantEntity;

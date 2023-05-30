@@ -4,6 +4,8 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.gnori.votingsystemrest.model.dto.UserDto;
+import org.gnori.votingsystemrest.model.dto.UserDto.AdvancedValidation;
+import org.gnori.votingsystemrest.model.dto.UserDto.ValidationOfUser;
 import org.gnori.votingsystemrest.service.impl.UserService;
 import org.gnori.votingsystemrest.service.security.AuthenticationService;
 import org.springframework.http.HttpStatus;
@@ -49,7 +51,7 @@ public class UserController {
 
   @ResponseStatus(HttpStatus.CREATED)
   @PostMapping(USER_URL)
-  public UserDto register(@Validated @RequestBody UserDto userDto) {
+  public UserDto register(@Validated(ValidationOfUser.class) @RequestBody UserDto userDto) {
 
     var responseDto = userService.createFromUserDto(userDto);
 
@@ -63,7 +65,7 @@ public class UserController {
 
   @ResponseStatus(HttpStatus.OK)
   @PutMapping(AUTH_URL)
-  public UserDto authenticateAndUpdateToken(@Validated @RequestBody UserDto userDto) {
+  public UserDto authenticateAndUpdateToken(@Validated(ValidationOfUser.class) @RequestBody UserDto userDto) {
 
     authenticationService.authenticate(userDto);
     var token = authenticationService.generateNewToken(userDto);
@@ -76,8 +78,8 @@ public class UserController {
 
   @ResponseStatus(HttpStatus.OK)
   @PatchMapping(USER_WITH_ID_URL)
-  public UserDto update(@PathVariable Integer userId,
-      @RequestBody UserDto userDto, @RequestHeader(AUTH_HEADER) String token){
+  public UserDto update(@PathVariable Integer userId, @RequestHeader(AUTH_HEADER) String token,
+      @Validated(AdvancedValidation.class) @RequestBody UserDto userDto){
 
     authenticationService.validatePermission(userId, token);
 

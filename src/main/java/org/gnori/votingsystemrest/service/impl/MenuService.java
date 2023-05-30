@@ -6,7 +6,7 @@ import org.gnori.votingsystemrest.dao.impl.MenuDao;
 import org.gnori.votingsystemrest.dao.impl.RestaurantDao;
 import org.gnori.votingsystemrest.error.ConflictException;
 import org.gnori.votingsystemrest.error.NotFoundException;
-import org.gnori.votingsystemrest.factory.MenuFactory;
+import org.gnori.votingsystemrest.factory.impl.MenuFactory;
 import org.gnori.votingsystemrest.model.dto.MenuDto;
 import org.gnori.votingsystemrest.model.entity.MenuEntity;
 import org.gnori.votingsystemrest.service.AbstractService;

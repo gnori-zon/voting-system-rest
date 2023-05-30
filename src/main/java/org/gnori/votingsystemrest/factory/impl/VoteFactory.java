@@ -1,4 +1,4 @@
-package org.gnori.votingsystemrest.factory;
+package org.gnori.votingsystemrest.factory.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.gnori.votingsystemrest.model.dto.VoteDto;

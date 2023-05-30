@@ -7,7 +7,7 @@ import org.gnori.votingsystemrest.dao.impl.RestaurantDao;
 import org.gnori.votingsystemrest.dao.impl.UserDao;
 import org.gnori.votingsystemrest.error.BadRequestException;
 import org.gnori.votingsystemrest.error.NotFoundException;
-import org.gnori.votingsystemrest.factory.VoteFactory;
+import org.gnori.votingsystemrest.factory.impl.VoteFactory;
 import org.gnori.votingsystemrest.model.dto.VoteDto;
 import org.gnori.votingsystemrest.model.entity.UserEntity;
 import org.springframework.http.HttpStatus;

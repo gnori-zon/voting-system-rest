@@ -2,6 +2,7 @@ package org.gnori.votingsystemrest.model.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -23,9 +24,10 @@ public class MenuDto {
   protected Integer id;
 
   @NotBlank(message = "field 'name' must be not empty")
-  @Length(max = 128, message = "field's 'name' length must be <= 128")
+  @Length(max = 128, message = "field's 'name' length must be less or equals than 128")
   protected String name;
 
+  @Valid
   @NotNull(message = "field 'itemList' must be not null")
   @Size(min = 1, max = 10, message = "field's 'itemList' size must be in interval [1; 10]")
   protected List<Item> itemList;

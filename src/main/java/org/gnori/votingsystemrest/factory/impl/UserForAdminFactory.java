@@ -1,12 +1,10 @@
-package org.gnori.votingsystemrest.factory;
+package org.gnori.votingsystemrest.factory.impl;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import lombok.RequiredArgsConstructor;
+import org.gnori.votingsystemrest.factory.BaseFactory;
 import org.gnori.votingsystemrest.model.dto.UserForAdminDto;
 import org.gnori.votingsystemrest.model.entity.UserEntity;
-import org.gnori.votingsystemrest.model.entity.enums.Role;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -37,14 +35,10 @@ public class UserForAdminFactory implements BaseFactory<UserForAdminDto, UserEnt
 
     if (userForAdminDto == null) return null;
 
-    var newRoles = (userForAdminDto.getRoles() != null && !userForAdminDto.getRoles().isEmpty())
-        ? userForAdminDto.getRoles()
-        : new HashSet<>(Set.of(Role.USER));
-
     return UserEntity.builder()
         .username(userForAdminDto.getUsername())
         .password(userForAdminDto.getPassword())
-        .roles(newRoles)
+        .roles(userForAdminDto.getRoles())
         .build();
 
   }
