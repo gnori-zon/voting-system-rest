@@ -1,6 +1,7 @@
 package org.gnori.votingsystemrest.config.security;
 
 import lombok.RequiredArgsConstructor;
+import org.gnori.votingsystemrest.model.entity.enums.Role;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -28,8 +29,8 @@ public class WebSecurityConfig {
         .authorizeHttpRequests(
             requests -> requests
                 .requestMatchers("/api/v1/auth", "/api/v1/users").permitAll()
-//                .requestMatchers("/api/v1/admin/**").hasRole(Role.ADMIN.name())
-//                .requestMatchers("/api/v1/users/**").hasRole(Role.USER.name())
+                .requestMatchers("/api/v1/admin/**").hasAuthority(Role.ADMIN.name())
+                .requestMatchers("/api/v1/users/**").hasAuthority(Role.USER.name())
                 .anyRequest().authenticated()
     )
         .sessionManagement()
