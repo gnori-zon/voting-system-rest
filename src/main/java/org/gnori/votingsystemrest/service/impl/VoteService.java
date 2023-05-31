@@ -10,10 +10,15 @@ import org.gnori.votingsystemrest.error.NotFoundException;
 import org.gnori.votingsystemrest.factory.impl.VoteFactory;
 import org.gnori.votingsystemrest.model.dto.VoteDto;
 import org.gnori.votingsystemrest.model.entity.UserEntity;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 @Service
+@CacheConfig(cacheNames = "vote")
 public class VoteService {
 
   private final UserDao userDao;
@@ -30,8 +35,7 @@ public class VoteService {
     this.voteFactory = voteFactory;
 
   }
-
-
+  @Cacheable
   public VoteDto getVote(Integer userId) {
 
     var user = validateAndGetUser(userId);
@@ -54,6 +58,7 @@ public class VoteService {
 
   }
 
+  @CachePut(key = "#userId")
   public VoteDto createVote(Integer userId, Integer restaurantId) {
 
     validateTimeVote(LocalTime.of(11,0));
@@ -71,7 +76,7 @@ public class VoteService {
     return prepareVoteDtoByRestaurantId(restaurantId);
 
   }
-
+  @CachePut(key = "#userId")
   public VoteDto updateVote(Integer userId, Integer restaurantId) {
 
     validateTimeVote(LocalTime.of(11,0));
@@ -83,6 +88,7 @@ public class VoteService {
 
   }
 
+  @CacheEvict("vote")
   public void deleteVote(Integer userId) {
 
     updateUserVoteParams(validateAndGetUser(userId), null, null);

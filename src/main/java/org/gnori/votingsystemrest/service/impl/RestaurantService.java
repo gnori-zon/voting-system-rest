@@ -10,10 +10,15 @@ import org.gnori.votingsystemrest.factory.impl.RestaurantFactory;
 import org.gnori.votingsystemrest.model.dto.RestaurantDto;
 import org.gnori.votingsystemrest.model.entity.RestaurantEntity;
 import org.gnori.votingsystemrest.service.AbstractService;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 @Service
+@CacheConfig(cacheNames = "restaurant")
 public class RestaurantService extends AbstractService<RestaurantEntity, RestaurantDao> {
 
   private final RestaurantFactory restaurantFactory;
@@ -30,16 +35,11 @@ public class RestaurantService extends AbstractService<RestaurantEntity, Restaur
 
   }
 
-  public boolean isExistsByName(String name) {
+  @Cacheable
+  public RestaurantDto getRestaurantDtoById(Integer restaurantId) {
 
-    return dao.existsByName(name);
-
-  }
-
-  public RestaurantDto getRestaurantDtoById(Integer id) {
-
-    var restaurant = get(id).orElseThrow(
-        () -> new NotFoundException(String.format("restaurant with id: %d is not exist", id),
+    var restaurant = get(restaurantId).orElseThrow(
+        () -> new NotFoundException(String.format("restaurant with id: %d is not exist", restaurantId),
             HttpStatus.NOT_FOUND)
     );
 
@@ -82,12 +82,13 @@ public class RestaurantService extends AbstractService<RestaurantEntity, Restaur
 
   }
 
-  public RestaurantDto updateByIdFromRestaurantDto(Integer id, RestaurantDto restaurantDto) {
+  @CachePut(key = "#restaurantId")
+  public RestaurantDto updateByIdFromRestaurantDto(Integer restaurantId, RestaurantDto restaurantDto) {
 
     var newRestaurant = restaurantFactory.convertFrom(restaurantDto);
-    var oldRestaurant = get(id).orElseThrow(
+    var oldRestaurant = get(restaurantId).orElseThrow(
         () -> new NotFoundException(
-            String.format("restaurant with id: %d is not exist", id),
+            String.format("restaurant with id: %d is not exist", restaurantId),
             HttpStatus.NOT_FOUND
         )
     );
@@ -114,13 +115,25 @@ public class RestaurantService extends AbstractService<RestaurantEntity, Restaur
       newRestaurant.setUpdateMenuDate(LocalDate.now());
     }
 
-    restaurantDto = update(id, newRestaurant)
+    restaurantDto = update(restaurantId, newRestaurant)
         .map(restaurantFactory::convertFrom)
         .orElse(null);
 
     if (oldMenu != null)  menuDao.deleteById(oldMenu.getId()); // deleted if menu not bind
 
     return restaurantDto;
+
+  }
+
+  @CacheEvict
+  @Override
+  public void delete(Integer restaurantId) {
+    super.delete(restaurantId);
+  }
+
+  private boolean isExistsByName(String name) {
+
+    return dao.existsByName(name);
 
   }
 

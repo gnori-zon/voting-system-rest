@@ -13,6 +13,9 @@ import org.gnori.votingsystemrest.model.dto.UserForAdminDto;
 import org.gnori.votingsystemrest.model.entity.UserEntity;
 import org.gnori.votingsystemrest.model.entity.enums.Role;
 import org.gnori.votingsystemrest.service.AbstractService;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -34,6 +37,7 @@ public class UserService extends AbstractService<UserEntity, UserDao> {
     this.userForAdminFactory = userForAdminFactory;
   }
 
+  @Cacheable(cacheNames = "admin-user")
   public UserForAdminDto getUserForAdminDtoById(Integer userId) {
 
     var userEntity = getAndValidateById(userId);
@@ -66,6 +70,7 @@ public class UserService extends AbstractService<UserEntity, UserDao> {
 
   }
 
+  @CachePut(cacheNames = "admin-user", key = "#userId")
   public UserForAdminDto updateFromUserForAdminDtoById(Integer userId,
       UserForAdminDto userForAdminDto) {
 
@@ -120,6 +125,7 @@ public class UserService extends AbstractService<UserEntity, UserDao> {
 
   }
 
+  @Cacheable(cacheNames = "user")
   public UserDto getUserDtoById(Integer userId) {
 
     var userEntity = getAndValidateById(userId);
@@ -128,6 +134,7 @@ public class UserService extends AbstractService<UserEntity, UserDao> {
 
   }
 
+  @CachePut(cacheNames = "user", key = "#userId")
   public UserDto updateByIdFromUserDto(Integer userId, UserDto newUserData) {
 
     var userEntity = getAndValidateById(userId);
@@ -149,10 +156,10 @@ public class UserService extends AbstractService<UserEntity, UserDao> {
 
   }
 
-  public void deleteById(Integer userId) {
-
-    delete(userId);
-
+  @CacheEvict( cacheNames = {"user", "admin-user"})
+  @Override
+  public void delete(Integer userId) {
+    super.delete(userId);
   }
 
   private UserEntity getAndValidateById(Integer userId) {

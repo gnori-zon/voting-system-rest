@@ -82,7 +82,7 @@ public class AdminUserController {
 
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @DeleteMapping(ADMIN_USERS_WITH_ID_URL)
-  public void delete (@PathVariable Integer userId) {
+  public void delete(@PathVariable Integer userId) {
 
     userService.delete(userId);
 

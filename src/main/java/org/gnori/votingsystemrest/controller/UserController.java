@@ -99,7 +99,7 @@ public class UserController {
 
     authenticationService.validatePermission(userId, token);
 
-    userService.deleteById(userId);
+    userService.delete(userId);
 
   }
 

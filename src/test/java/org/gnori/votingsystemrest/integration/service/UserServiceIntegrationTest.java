@@ -399,15 +399,4 @@ class UserServiceIntegrationTest {
     service.delete(firstEntity.getId());
   }
 
-  @Test
-  void deleteByIdAndUserNameSuccess(){
-
-    rawEntity = service.create(rawEntity);
-
-    service.deleteById(rawEntity.getId());
-
-    Assertions.assertTrue(service.getAll().isEmpty());
-
-  }
-
 }

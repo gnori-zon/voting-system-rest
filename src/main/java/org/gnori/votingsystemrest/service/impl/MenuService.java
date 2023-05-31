@@ -10,10 +10,15 @@ import org.gnori.votingsystemrest.factory.impl.MenuFactory;
 import org.gnori.votingsystemrest.model.dto.MenuDto;
 import org.gnori.votingsystemrest.model.entity.MenuEntity;
 import org.gnori.votingsystemrest.service.AbstractService;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 @Service
+@CacheConfig(cacheNames = "menu")
 public class MenuService extends AbstractService<MenuEntity, MenuDao> {
 
   private final RestaurantDao restaurantDao;
@@ -25,6 +30,7 @@ public class MenuService extends AbstractService<MenuEntity, MenuDao> {
     this.menuFactory = menuFactory;
   }
 
+  @Cacheable
   public MenuDto getMenuDtoByRestaurantId(Integer restaurantId) {
 
     var menu = restaurantDao.findById(restaurantId)
@@ -53,6 +59,7 @@ public class MenuService extends AbstractService<MenuEntity, MenuDao> {
 
   }
 
+  @CachePut(key = "#restaurantId")
   public MenuDto createForRestaurant(Integer restaurantId, MenuDto menuDto) {
 
     return restaurantDao.findById(restaurantId).map(
@@ -85,6 +92,7 @@ public class MenuService extends AbstractService<MenuEntity, MenuDao> {
 
   }
 
+  @CachePut(key = "#restaurantId")
   public MenuDto updateByRestaurantIdFromMenuDto(Integer restaurantId, MenuDto menuDto) {
 
     return restaurantDao.findById(restaurantId).map(
@@ -112,6 +120,7 @@ public class MenuService extends AbstractService<MenuEntity, MenuDao> {
 
   }
 
+  @CacheEvict
   public void deleteByRestaurantId(Integer restaurantId) {
 
     restaurantDao.findById(restaurantId).ifPresent(
