@@ -22,6 +22,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
   private static final String AUTH_HEADER = "Authorization";
   private static final Integer BEGIN_INDEX_TOKEN = 7;
+  private static final String TOKEN_START_TEXT = "Bearer ";
 
 
   private final JwtService jwtService;
@@ -34,16 +35,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
       @NonNull FilterChain filterChain
   ) throws ServletException, IOException {
 
-    final String authHeader =  request.getHeader(AUTH_HEADER);
     final String jwt;
     final String username;
+    final String valueFromAuthHeader =  request.getHeader(AUTH_HEADER);
 
-    if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+    if (valueFromAuthHeader == null || !valueFromAuthHeader.startsWith(TOKEN_START_TEXT)) {
       filterChain.doFilter(request, response);
       return;
     }
 
-    jwt = authHeader.substring(BEGIN_INDEX_TOKEN);
+    jwt = valueFromAuthHeader.substring(BEGIN_INDEX_TOKEN);
     username = jwtService.extractUsername(jwt);
 
     if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
@@ -59,8 +60,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
         SecurityContextHolder.getContext().setAuthentication(authToken);
+
       }
     }
     doFilter(request, response, filterChain);
   }
+
 }

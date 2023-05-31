@@ -28,15 +28,15 @@ import org.springframework.web.bind.annotation.RestController;
 public class RestaurantController {
 
   public static final String RESTAURANT_URL = "/restaurants";
-  public static final String RESTAURANT_URL_WITH_ID = RESTAURANT_URL +"/{id}";
+  public static final String RESTAURANT_URL_WITH_ID = RESTAURANT_URL +"/{restaurantId}";
 
   private final RestaurantService restaurantService;
 
   @ResponseStatus(HttpStatus.OK)
   @GetMapping(value = RESTAURANT_URL_WITH_ID, produces = MediaType.APPLICATION_JSON_VALUE)
-  public RestaurantDto getById(@PathVariable Integer id) {
+  public RestaurantDto getById(@PathVariable Integer restaurantId) {
 
-    return restaurantService.getRestaurantDtoById(id);
+    return restaurantService.getRestaurantDtoById(restaurantId);
 
   }
 
@@ -60,17 +60,19 @@ public class RestaurantController {
   @ResponseStatus(HttpStatus.OK)
   @PutMapping(value = RESTAURANT_URL_WITH_ID,
       consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-  public RestaurantDto update(@PathVariable Integer id, @Validated @RequestBody RestaurantDto restaurantDto) {
+  public RestaurantDto update(
+      @PathVariable Integer restaurantId,
+      @Validated @RequestBody RestaurantDto restaurantDto) {
 
-    return restaurantService.updateByIdFromRestaurantDto(id, restaurantDto);
+    return restaurantService.updateByIdFromRestaurantDto(restaurantId, restaurantDto);
 
   }
 
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @DeleteMapping(RESTAURANT_URL_WITH_ID)
-  public void delete(@PathVariable Integer id) {
+  public void delete(@PathVariable Integer restaurantId) {
 
-    restaurantService.delete(id);
+    restaurantService.delete(restaurantId);
 
   }
 }

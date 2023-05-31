@@ -4,8 +4,8 @@ import java.time.LocalDate;
 import java.util.List;
 import org.gnori.votingsystemrest.dao.impl.MenuDao;
 import org.gnori.votingsystemrest.dao.impl.RestaurantDao;
-import org.gnori.votingsystemrest.error.ConflictException;
-import org.gnori.votingsystemrest.error.NotFoundException;
+import org.gnori.votingsystemrest.error.exceptions.impl.ConflictException;
+import org.gnori.votingsystemrest.error.exceptions.impl.NotFoundException;
 import org.gnori.votingsystemrest.factory.impl.RestaurantFactory;
 import org.gnori.votingsystemrest.model.dto.RestaurantDto;
 import org.gnori.votingsystemrest.model.entity.RestaurantEntity;
@@ -38,12 +38,12 @@ public class RestaurantService extends AbstractService<RestaurantEntity, Restaur
   @Cacheable
   public RestaurantDto getRestaurantDtoById(Integer restaurantId) {
 
-    var restaurant = get(restaurantId).orElseThrow(
+    var restaurantEntity = get(restaurantId).orElseThrow(
         () -> new NotFoundException(String.format("restaurant with id: %d is not exist", restaurantId),
             HttpStatus.NOT_FOUND)
     );
 
-    return restaurantFactory.convertFrom(restaurant);
+    return restaurantFactory.convertFrom(restaurantEntity);
 
   }
 
@@ -65,17 +65,17 @@ public class RestaurantService extends AbstractService<RestaurantEntity, Restaur
 
     }
 
-    var restaurant = restaurantFactory.convertFrom(restaurantDto);
+    var restaurantEntity = restaurantFactory.convertFrom(restaurantDto);
 
-    if (restaurant.getLaunchMenu() != null) {
-      restaurant.setUpdateMenuDate(LocalDate.now());
+    if (restaurantEntity.getLaunchMenu() != null) {
+      restaurantEntity.setUpdateMenuDate(LocalDate.now());
     }
 
-    restaurant = create(restaurant);
-    restaurantDto.setId(restaurant.getId());
+    restaurantEntity = create(restaurantEntity);
+    restaurantDto.setId(restaurantEntity.getId());
 
-    if (restaurant.getLaunchMenu() != null) {
-      restaurantDto.getLaunchMenu().setId(restaurant.getLaunchMenu().getId());
+    if (restaurantEntity.getLaunchMenu() != null) {
+      restaurantDto.getLaunchMenu().setId(restaurantEntity.getLaunchMenu().getId());
     }
 
     return restaurantDto;
@@ -83,18 +83,20 @@ public class RestaurantService extends AbstractService<RestaurantEntity, Restaur
   }
 
   @CachePut(key = "#restaurantId")
-  public RestaurantDto updateByIdFromRestaurantDto(Integer restaurantId, RestaurantDto restaurantDto) {
+  public RestaurantDto updateByIdFromRestaurantDto(
+      Integer restaurantId,
+      RestaurantDto restaurantDto) {
 
-    var newRestaurant = restaurantFactory.convertFrom(restaurantDto);
-    var oldRestaurant = get(restaurantId).orElseThrow(
+    var newRestaurantEntity = restaurantFactory.convertFrom(restaurantDto);
+    var oldRestaurantEntity = get(restaurantId).orElseThrow(
         () -> new NotFoundException(
             String.format("restaurant with id: %d is not exist", restaurantId),
             HttpStatus.NOT_FOUND
         )
     );
 
-    if (!oldRestaurant.getName().equals(newRestaurant.getName()) &&
-        isExistsByName(newRestaurant.getName())) {
+    if (!oldRestaurantEntity.getName().equals(newRestaurantEntity.getName()) &&
+        isExistsByName(newRestaurantEntity.getName())) {
 
       throw new ConflictException(
           String.format("restaurant with name: %s is already exist", restaurantDto.getName()),
@@ -103,19 +105,19 @@ public class RestaurantService extends AbstractService<RestaurantEntity, Restaur
 
     }
 
-    var oldMenu = oldRestaurant.getLaunchMenu();
-    var newMenu = newRestaurant.getLaunchMenu();
+    var oldMenu = oldRestaurantEntity.getLaunchMenu();
+    var newMenu = newRestaurantEntity.getLaunchMenu();
 
     if ((oldMenu == null && newMenu != null) ||
         (oldMenu != null && newMenu == null) ||
-        (oldMenu != null && !oldRestaurant.getLaunchMenu().getItemList().equals(
-            newRestaurant.getLaunchMenu().getItemList()
+        (oldMenu != null && !oldRestaurantEntity.getLaunchMenu().getItemList().equals(
+            newRestaurantEntity.getLaunchMenu().getItemList()
         ))) {
 
-      newRestaurant.setUpdateMenuDate(LocalDate.now());
+      newRestaurantEntity.setUpdateMenuDate(LocalDate.now());
     }
 
-    restaurantDto = update(restaurantId, newRestaurant)
+    restaurantDto = update(restaurantId, newRestaurantEntity)
         .map(restaurantFactory::convertFrom)
         .orElse(null);
 

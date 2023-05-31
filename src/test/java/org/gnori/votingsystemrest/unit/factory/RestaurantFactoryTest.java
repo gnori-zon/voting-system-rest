@@ -34,21 +34,21 @@ class RestaurantFactoryTest extends AbstractFactoryTest<RestaurantDto, Restauran
         )
         .build();
 
-    var raw = RestaurantDto.builder()
+    var rawRestaurantDto = RestaurantDto.builder()
         .id(5)
         .name("r-1")
         .launchMenu(menuDto)
         .build();
 
     var expectedValue = RestaurantEntity.builder()
-        .name(raw.getName())
+        .name(rawRestaurantDto.getName())
         .launchMenu(MenuEntity.builder()
             .name(menuDto.getName())
             .itemList(menuDto.getItemList())
             .build())
         .build();
 
-    convertFromDtoTest(raw, expectedValue);
+    convertFromDtoTest(rawRestaurantDto, expectedValue);
 
   }
 
@@ -64,31 +64,31 @@ class RestaurantFactoryTest extends AbstractFactoryTest<RestaurantDto, Restauran
         .build();
     menuDto.setId(5);
 
-    var raw = RestaurantEntity.builder()
+    var rawRestaurantDto = RestaurantEntity.builder()
         .name("r-1")
         .launchMenu(menuDto)
         .updateMenuDate(LocalDate.now())
         .build();
-    raw.setId(5);
+    rawRestaurantDto.setId(5);
 
     var expectedValue = RestaurantDto.builder()
-        .id(raw.getId())
-        .name(raw.getName())
+        .id(rawRestaurantDto.getId())
+        .name(rawRestaurantDto.getName())
         .launchMenu(MenuDto.builder()
-            .id(raw.getLaunchMenu().getId())
-            .name(raw.getLaunchMenu().getName())
-            .itemList(raw.getLaunchMenu().getItemList())
+            .id(rawRestaurantDto.getLaunchMenu().getId())
+            .name(rawRestaurantDto.getLaunchMenu().getName())
+            .itemList(rawRestaurantDto.getLaunchMenu().getItemList())
             .build())
         .build();
 
-    convertFromEntityTest(raw, expectedValue);
+    convertFromEntityTest(rawRestaurantDto, expectedValue);
 
   }
 
   @Test
   void convertAllFromTest() {
 
-    var entity1 = RestaurantEntity.builder()
+    var restaurantEntity1 = RestaurantEntity.builder()
         .name("r-1")
         .launchMenu(MenuEntity.builder()
             .name("m-1")
@@ -96,10 +96,10 @@ class RestaurantFactoryTest extends AbstractFactoryTest<RestaurantDto, Restauran
             .build())
         .updateMenuDate(LocalDate.now())
         .build();
-    entity1.setId(5);
-    entity1.getLaunchMenu().setId(5);
+    restaurantEntity1.setId(5);
+    restaurantEntity1.getLaunchMenu().setId(5);
 
-    var entity2 = RestaurantEntity.builder()
+    var restaurantEntity2 = RestaurantEntity.builder()
         .name("r-2")
         .launchMenu(MenuEntity.builder()
             .name("m-2")
@@ -107,32 +107,32 @@ class RestaurantFactoryTest extends AbstractFactoryTest<RestaurantDto, Restauran
             .build())
         .updateMenuDate(LocalDate.now())
         .build();
-    entity2.getLaunchMenu().setId(6);
-    entity2.setId(6);
+    restaurantEntity2.getLaunchMenu().setId(6);
+    restaurantEntity2.setId(6);
 
-    var raw = new ArrayList<>(List.of(entity1, entity2));
+    var raw = new ArrayList<>(List.of(restaurantEntity1, restaurantEntity2));
 
-    var dto1 = RestaurantDto.builder()
-        .id(entity1.getId())
-        .name(entity1.getName())
+    var restaurantDto1 = RestaurantDto.builder()
+        .id(restaurantEntity1.getId())
+        .name(restaurantEntity1.getName())
         .launchMenu(MenuDto.builder()
-            .id(entity1.getLaunchMenu().getId())
-            .name(entity1.getLaunchMenu().getName())
-            .itemList(entity1.getLaunchMenu().getItemList())
+            .id(restaurantEntity1.getLaunchMenu().getId())
+            .name(restaurantEntity1.getLaunchMenu().getName())
+            .itemList(restaurantEntity1.getLaunchMenu().getItemList())
             .build())
         .build();
 
-    var dto2 = RestaurantDto.builder()
-        .id(entity2.getId())
-        .name(entity2.getName())
+    var restaurantDto2 = RestaurantDto.builder()
+        .id(restaurantEntity2.getId())
+        .name(restaurantEntity2.getName())
         .launchMenu(MenuDto.builder()
-            .id(entity2.getLaunchMenu().getId())
-            .name(entity2.getLaunchMenu().getName())
-            .itemList(entity2.getLaunchMenu().getItemList())
+            .id(restaurantEntity2.getLaunchMenu().getId())
+            .name(restaurantEntity2.getLaunchMenu().getName())
+            .itemList(restaurantEntity2.getLaunchMenu().getItemList())
             .build())
         .build();
 
-    var expectedValue = new ArrayList<>(List.of(dto1, dto2));
+    var expectedValue = new ArrayList<>(List.of(restaurantDto1, restaurantDto2));
 
     convertFromListEntityTest(raw, expectedValue);
 

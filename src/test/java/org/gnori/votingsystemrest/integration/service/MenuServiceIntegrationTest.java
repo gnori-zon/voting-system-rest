@@ -4,8 +4,8 @@ import java.math.BigDecimal;
 import java.util.List;
 import org.gnori.votingsystemrest.dao.impl.MenuDao;
 import org.gnori.votingsystemrest.dao.impl.RestaurantDao;
-import org.gnori.votingsystemrest.error.ConflictException;
-import org.gnori.votingsystemrest.error.NotFoundException;
+import org.gnori.votingsystemrest.error.exceptions.impl.ConflictException;
+import org.gnori.votingsystemrest.error.exceptions.impl.NotFoundException;
 import org.gnori.votingsystemrest.factory.impl.MenuFactory;
 import org.gnori.votingsystemrest.factory.impl.RestaurantFactory;
 import org.gnori.votingsystemrest.model.Item;
@@ -27,7 +27,7 @@ class MenuServiceIntegrationTest {
   private final MenuService service;
   private final RestaurantService restaurantService;
 
-  private MenuDto raw;
+  private MenuDto rawMenuDto;
   private Integer rawId;
   private Integer restaurantId = 1;
 
@@ -37,7 +37,8 @@ class MenuServiceIntegrationTest {
 
     this.service = new MenuService(menuDao, restaurantDao, new MenuFactory());
 
-    restaurantService = new RestaurantService(menuDao, restaurantDao, new RestaurantFactory(new MenuFactory()) );
+    restaurantService = new RestaurantService(menuDao, restaurantDao,
+        new RestaurantFactory(new MenuFactory()) );
 
   }
 
@@ -45,7 +46,7 @@ class MenuServiceIntegrationTest {
   @BeforeEach
   void updateRaw(){
 
-    raw = MenuDto.builder()
+    rawMenuDto = MenuDto.builder()
                 .id(100)
                 .name("new Menu")
                 .itemList(
@@ -54,7 +55,7 @@ class MenuServiceIntegrationTest {
                 )
                 .build();
 
-    rawId = raw.getId();
+    rawId = rawMenuDto.getId();
 
   }
 
@@ -62,14 +63,14 @@ class MenuServiceIntegrationTest {
   @Test
   void getAllSuccess() {
 
-    var restaurant = restaurantService.create(
+    var restaurantEntity = restaurantService.create(
         RestaurantEntity.builder()
             .name("restaurant")
             .build());
 
-    restaurantId = restaurant.getId();
+    restaurantId = restaurantEntity.getId();
 
-    service.createForRestaurant(restaurantId, raw);
+    service.createByRestaurantIdFromMenuDto(restaurantId, rawMenuDto);
 
     var actualAll = service.getAllMenuDto();
     var actual = actualAll.stream().findFirst().orElse(null);
@@ -79,8 +80,8 @@ class MenuServiceIntegrationTest {
     Assertions.assertEquals(1, actualAll.size());
     Assertions.assertNotNull(actual);
 
-    Assertions.assertEquals(raw.getName(), actual.getName());
-    Assertions.assertEquals(raw.getItemList(), actual.getItemList());
+    Assertions.assertEquals(rawMenuDto.getName(), actual.getName());
+    Assertions.assertEquals(rawMenuDto.getItemList(), actual.getItemList());
 
     Assertions.assertNotEquals(rawId, actual.getId());
 
@@ -98,14 +99,14 @@ class MenuServiceIntegrationTest {
 
     restaurantId = restaurant.getId();
 
-    service.createForRestaurant(restaurantId, raw);
+    service.createByRestaurantIdFromMenuDto(restaurantId, rawMenuDto);
 
     var actual = service.getMenuDtoByRestaurantId(restaurantId);
 
     Assertions.assertNotNull(actual);
 
-    Assertions.assertEquals(raw.getName(), actual.getName());
-    Assertions.assertEquals(raw.getItemList(), actual.getItemList());
+    Assertions.assertEquals(rawMenuDto.getName(), actual.getName());
+    Assertions.assertEquals(rawMenuDto.getItemList(), actual.getItemList());
 
     Assertions.assertNotEquals(rawId, actual.getId());
 
@@ -124,12 +125,12 @@ class MenuServiceIntegrationTest {
   @Test
   void getMenuDtoByRestaurantIdShouldThrowNotFoundExceptionByMenu() {
 
-    var restaurant = restaurantService.create(
+    var restaurantEntity = restaurantService.create(
         RestaurantEntity.builder()
             .name("restaurant")
             .build());
 
-    restaurantId = restaurant.getId();
+    restaurantId = restaurantEntity.getId();
 
     Assertions.assertThrows(
         NotFoundException.class, () -> service.getMenuDtoByRestaurantId(restaurantId));
@@ -142,21 +143,21 @@ class MenuServiceIntegrationTest {
   @Test
   void createForRestaurantSuccess() {
 
-    var restaurant = restaurantService.create(
+    var restaurantEntity = restaurantService.create(
         RestaurantEntity.builder()
             .name("restaurant")
             .build());
 
-    restaurantId = restaurant.getId();
+    restaurantId = restaurantEntity.getId();
 
-    service.createForRestaurant(restaurantId, raw);
+    service.createByRestaurantIdFromMenuDto(restaurantId, rawMenuDto);
 
     var actual = service.getMenuDtoByRestaurantId(restaurantId);
 
     Assertions.assertNotNull(actual);
 
-    Assertions.assertEquals(raw.getName(), actual.getName());
-    Assertions.assertEquals(raw.getItemList(), actual.getItemList());
+    Assertions.assertEquals(rawMenuDto.getName(), actual.getName());
+    Assertions.assertEquals(rawMenuDto.getItemList(), actual.getItemList());
 
     Assertions.assertNotEquals(rawId, actual.getId());
 
@@ -167,17 +168,18 @@ class MenuServiceIntegrationTest {
   @Test
   void createForRestaurantShouldThrowNotConflictException() {
 
-    var restaurant = restaurantService.create(
+    var restaurantEntity = restaurantService.create(
         RestaurantEntity.builder()
             .name("restaurant")
             .build());
 
-    restaurantId = restaurant.getId();
+    restaurantId = restaurantEntity.getId();
 
-    service.createForRestaurant(restaurantId, raw);
+    service.createByRestaurantIdFromMenuDto(restaurantId, rawMenuDto);
 
     Assertions.assertThrows(
-        ConflictException.class, () -> service.createForRestaurant(restaurantId, raw));
+        ConflictException.class,
+        () -> service.createByRestaurantIdFromMenuDto(restaurantId, rawMenuDto));
 
     restaurantService.delete(restaurantId);
 
@@ -187,7 +189,8 @@ class MenuServiceIntegrationTest {
   void createForRestaurantShouldThrowNotFoundException() {
 
     Assertions.assertThrows(
-        NotFoundException.class, () -> service.createForRestaurant(restaurantId, raw));
+        NotFoundException.class,
+        () -> service.createByRestaurantIdFromMenuDto(restaurantId, rawMenuDto));
 
   }
 
@@ -195,21 +198,21 @@ class MenuServiceIntegrationTest {
   @Test
   void updateByRestaurantIdFromMenuDtoSuccess() {
 
-    var restaurant = restaurantService.create(
+    var restaurantEntity = restaurantService.create(
         RestaurantEntity.builder()
             .name("restaurant")
             .build());
 
-    restaurantId = restaurant.getId();
+    restaurantId = restaurantEntity.getId();
 
-    service.updateByRestaurantIdFromMenuDto(restaurantId, raw);
+    service.updateByRestaurantIdFromMenuDto(restaurantId, rawMenuDto);
 
     var actual = service.getMenuDtoByRestaurantId(restaurantId);
 
     Assertions.assertNotNull(actual);
 
-    Assertions.assertEquals(raw.getName(), actual.getName());
-    Assertions.assertEquals(raw.getItemList(), actual.getItemList());
+    Assertions.assertEquals(rawMenuDto.getName(), actual.getName());
+    Assertions.assertEquals(rawMenuDto.getItemList(), actual.getItemList());
 
     Assertions.assertNotEquals(rawId, actual.getId());
 
@@ -221,7 +224,8 @@ class MenuServiceIntegrationTest {
   void updateByRestaurantIdFromMenuDtoShouldThrowNotFound() {
 
     Assertions.assertThrows(
-        NotFoundException.class, () -> service.updateByRestaurantIdFromMenuDto(restaurantId, raw));
+        NotFoundException.class,
+        () -> service.updateByRestaurantIdFromMenuDto(restaurantId, rawMenuDto));
 
   }
 
@@ -229,14 +233,14 @@ class MenuServiceIntegrationTest {
   @Test
   void deleteByRestaurantIdSuccess() {
 
-    var restaurant = restaurantService.create(
+    var restaurantEntity = restaurantService.create(
         RestaurantEntity.builder()
             .name("restaurant")
             .build());
 
-    restaurantId = restaurant.getId();
+    restaurantId = restaurantEntity.getId();
 
-    service.createForRestaurant(restaurantId, raw);
+    service.createByRestaurantIdFromMenuDto(restaurantId, rawMenuDto);
 
     service.deleteByRestaurantId(restaurantId);
 

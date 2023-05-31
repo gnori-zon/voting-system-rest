@@ -22,7 +22,7 @@ public interface RestaurantDao extends BaseDao<RestaurantEntity> {
 
   boolean existsByIdAndUpdateMenuDateEquals(Integer id, LocalDate updateMenuDate);
 
-  @Query("select new org.gnori.votingsystemrest.model.dto.VoteDto(r, cast((select count(*) from UserEntity as u where u.votedFor = r.id and u.dateVote = current_date)  as int) ) "
+  @Query("select new org.gnori.votingsystemrest.model.dto.VoteDto(r, cast((select count(*) from UserEntity as u where u.votedFor = r.id and u.dateVote = current_date)  as int)) "
       + "from RestaurantEntity as r "
       + "where r.updateMenuDate = current_date")
   List<VoteDto> findAllVotes();

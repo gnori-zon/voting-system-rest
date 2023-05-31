@@ -4,8 +4,8 @@ import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 import org.gnori.votingsystemrest.dao.impl.UserDao;
-import org.gnori.votingsystemrest.error.ConflictException;
-import org.gnori.votingsystemrest.error.NotFoundException;
+import org.gnori.votingsystemrest.error.exceptions.impl.ConflictException;
+import org.gnori.votingsystemrest.error.exceptions.impl.NotFoundException;
 import org.gnori.votingsystemrest.factory.impl.UserFactory;
 import org.gnori.votingsystemrest.factory.impl.UserForAdminFactory;
 import org.gnori.votingsystemrest.model.dto.UserDto;
@@ -27,9 +27,9 @@ class UserServiceIntegrationTest {
 
   private final UserService service;
 
-  private UserDto rawDto;
+  private UserDto rawUserDto;
 
-  private UserEntity rawEntity;
+  private UserEntity rawUserEntity;
 
   public UserServiceIntegrationTest(@Autowired UserDao userDao) {
     this.service = new UserService(
@@ -39,14 +39,14 @@ class UserServiceIntegrationTest {
 
   @BeforeEach
   void updateRaw() {
-    rawDto = UserDto.builder()
+    rawUserDto = UserDto.builder()
         .id(5)
         .username("user")
         .password("password")
         .roles(Set.of(Role.ADMIN))
         .build();
 
-    rawEntity = UserEntity.builder()
+    rawUserEntity = UserEntity.builder()
         .username("admin")
         .password("password")
         .roles(new HashSet<>(Set.of(Role.USER)))
@@ -59,7 +59,7 @@ class UserServiceIntegrationTest {
   @Test
   void getAllForUserSuccess() {
 
-    rawEntity = service.create(rawEntity);
+    rawUserEntity = service.create(rawUserEntity);
 
     var actualAll = service.getAllUserDto();
     var actual = actualAll.stream().findFirst().orElse(null);
@@ -69,10 +69,10 @@ class UserServiceIntegrationTest {
     Assertions.assertEquals(1, actualAll.size());
 
     Assertions.assertNotNull(actual);
-    Assertions.assertEquals(rawEntity.getId(), actual.getId());
-    Assertions.assertEquals(rawEntity.getUsername(), actual.getUsername());
-    Assertions.assertNotEquals(rawEntity.getPassword(), actual.getPassword());
-    Assertions.assertEquals(rawEntity.getRoles(), actual.getRoles());
+    Assertions.assertEquals(rawUserEntity.getId(), actual.getId());
+    Assertions.assertEquals(rawUserEntity.getUsername(), actual.getUsername());
+    Assertions.assertNotEquals(rawUserEntity.getPassword(), actual.getPassword());
+    Assertions.assertEquals(rawUserEntity.getRoles(), actual.getRoles());
 
     service.delete(actual.getId());
 
@@ -81,7 +81,7 @@ class UserServiceIntegrationTest {
   @Test
   void getAllForAdminSuccess() {
 
-    rawEntity = service.create(rawEntity);
+    rawUserEntity = service.create(rawUserEntity);
 
     var actualAll = service.getAllUserForAdminDto();
     var actual = actualAll.stream().findFirst().orElse(null);
@@ -91,12 +91,12 @@ class UserServiceIntegrationTest {
     Assertions.assertEquals(1, actualAll.size());
 
     Assertions.assertNotNull(actual);
-    Assertions.assertEquals(rawEntity.getId(), actual.getId());
-    Assertions.assertEquals(rawEntity.getUsername(), actual.getUsername());
-    Assertions.assertNotEquals(rawEntity.getPassword(), actual.getPassword());
-    Assertions.assertEquals(rawEntity.getVotedFor(), actual.getVotedFor());
-    Assertions.assertEquals(rawEntity.getDateVote(), actual.getDateVote());
-    Assertions.assertEquals(rawEntity.getRoles(), actual.getRoles());
+    Assertions.assertEquals(rawUserEntity.getId(), actual.getId());
+    Assertions.assertEquals(rawUserEntity.getUsername(), actual.getUsername());
+    Assertions.assertNotEquals(rawUserEntity.getPassword(), actual.getPassword());
+    Assertions.assertEquals(rawUserEntity.getVotedFor(), actual.getVotedFor());
+    Assertions.assertEquals(rawUserEntity.getDateVote(), actual.getDateVote());
+    Assertions.assertEquals(rawUserEntity.getRoles(), actual.getRoles());
 
     service.delete(actual.getId());
 
@@ -105,17 +105,17 @@ class UserServiceIntegrationTest {
   @Test
   void getByIdAndUsernameForUserSuccess() {
 
-    rawEntity = service.create(rawEntity);
+    rawUserEntity = service.create(rawUserEntity);
 
-    var actual = service.getUserDtoById(rawEntity.getId());
-
-    Assertions.assertNotNull(actual);
+    var actual = service.getUserDtoById(rawUserEntity.getId());
 
     Assertions.assertNotNull(actual);
-    Assertions.assertEquals(rawEntity.getId(), actual.getId());
-    Assertions.assertEquals(rawEntity.getUsername(), actual.getUsername());
-    Assertions.assertNotEquals(rawEntity.getPassword(), actual.getPassword());
-    Assertions.assertEquals(rawEntity.getRoles(), actual.getRoles());
+
+    Assertions.assertNotNull(actual);
+    Assertions.assertEquals(rawUserEntity.getId(), actual.getId());
+    Assertions.assertEquals(rawUserEntity.getUsername(), actual.getUsername());
+    Assertions.assertNotEquals(rawUserEntity.getPassword(), actual.getPassword());
+    Assertions.assertEquals(rawUserEntity.getRoles(), actual.getRoles());
 
     service.delete(actual.getId());
 
@@ -133,18 +133,18 @@ class UserServiceIntegrationTest {
   @Test
   void getByIdForAdminSuccess() {
 
-    rawEntity = service.create(rawEntity);
+    rawUserEntity = service.create(rawUserEntity);
 
-    var actual = service.getUserForAdminDtoById(rawEntity.getId());
+    var actual = service.getUserForAdminDtoById(rawUserEntity.getId());
 
     Assertions.assertNotNull(actual);
 
-    Assertions.assertEquals(rawEntity.getId(), actual.getId());
-    Assertions.assertEquals(rawEntity.getUsername(), actual.getUsername());
-    Assertions.assertNotEquals(rawEntity.getPassword(), actual.getPassword());
-    Assertions.assertEquals(rawEntity.getVotedFor(), actual.getVotedFor());
-    Assertions.assertEquals(rawEntity.getDateVote(), actual.getDateVote());
-    Assertions.assertEquals(rawEntity.getRoles(), actual.getRoles());
+    Assertions.assertEquals(rawUserEntity.getId(), actual.getId());
+    Assertions.assertEquals(rawUserEntity.getUsername(), actual.getUsername());
+    Assertions.assertNotEquals(rawUserEntity.getPassword(), actual.getPassword());
+    Assertions.assertEquals(rawUserEntity.getVotedFor(), actual.getVotedFor());
+    Assertions.assertEquals(rawUserEntity.getDateVote(), actual.getDateVote());
+    Assertions.assertEquals(rawUserEntity.getRoles(), actual.getRoles());
 
     service.delete(actual.getId());
 
@@ -162,17 +162,17 @@ class UserServiceIntegrationTest {
   @Test
   void getByUsernameSuccess() {
 
-    rawEntity = service.create(rawEntity);
+    rawUserEntity = service.create(rawUserEntity);
 
-    var actual = service.getByUsername(rawEntity.getUsername());
+    var actual = service.getByUsername(rawUserEntity.getUsername());
 
     Assertions.assertNotNull(actual);
 
-    Assertions.assertEquals(rawEntity.getId(), actual.getId());
-    Assertions.assertEquals(rawEntity.getUsername(), actual.getUsername());
-    Assertions.assertEquals(rawEntity.getVotedFor(), actual.getVotedFor());
-    Assertions.assertEquals(rawEntity.getDateVote(), actual.getDateVote());
-    Assertions.assertEquals(rawEntity.getRoles(), actual.getRoles());
+    Assertions.assertEquals(rawUserEntity.getId(), actual.getId());
+    Assertions.assertEquals(rawUserEntity.getUsername(), actual.getUsername());
+    Assertions.assertEquals(rawUserEntity.getVotedFor(), actual.getVotedFor());
+    Assertions.assertEquals(rawUserEntity.getDateVote(), actual.getDateVote());
+    Assertions.assertEquals(rawUserEntity.getRoles(), actual.getRoles());
 
     service.delete(actual.getId());
 
@@ -190,14 +190,14 @@ class UserServiceIntegrationTest {
   @Test
   void createFromUserDtoSuccess() {
 
-    var actual = service.createFromUserDto(rawDto);
+    var actual = service.createFromUserDto(rawUserDto);
 
     Assertions.assertNotNull(actual);
 
     Assertions.assertNotNull(actual);
-    Assertions.assertNotEquals(rawDto.getId(), actual.getId());
-    Assertions.assertEquals(rawDto.getUsername(), actual.getUsername());
-    Assertions.assertNotEquals(rawDto.getPassword(), actual.getPassword());
+    Assertions.assertNotEquals(rawUserDto.getId(), actual.getId());
+    Assertions.assertEquals(rawUserDto.getUsername(), actual.getUsername());
+    Assertions.assertNotEquals(rawUserDto.getPassword(), actual.getPassword());
     Assertions.assertEquals(new HashSet<>(Set.of(Role.USER)), actual.getRoles());
 
     service.delete(actual.getId());
@@ -207,15 +207,15 @@ class UserServiceIntegrationTest {
   @Test
   void createFromUserDtoShouldThrowConflictException() {
 
-    rawEntity = service.create(rawEntity);
+    rawUserEntity = service.create(rawUserEntity);
 
-    rawDto.setUsername(rawEntity.getUsername());
+    rawUserDto.setUsername(rawUserEntity.getUsername());
 
     Assertions.assertThrows(
-        ConflictException.class, () -> service.createFromUserDto(rawDto)
+        ConflictException.class, () -> service.createFromUserDto(rawUserDto)
     );
 
-    service.delete(rawEntity.getId());
+    service.delete(rawUserEntity.getId());
 
   }
 
@@ -223,8 +223,8 @@ class UserServiceIntegrationTest {
   void createFromUserForAdminDtoSuccess() {
 
     var userForAdminDto = new UserForAdminDto();
-    userForAdminDto.setUsername(rawEntity.getUsername());
-    userForAdminDto.setPassword(rawEntity.getUsername());
+    userForAdminDto.setUsername(rawUserEntity.getUsername());
+    userForAdminDto.setPassword(rawUserEntity.getUsername());
     userForAdminDto.setRoles(new HashSet<>(Set.of(Role.ADMIN)));
 
     var actual = service.createFromUserForAdminDto(userForAdminDto);
@@ -244,17 +244,17 @@ class UserServiceIntegrationTest {
   void createFromUserForAdminDtoShouldThrowConflictException() {
 
     var userForAdminDto = new UserForAdminDto();
-    userForAdminDto.setUsername(rawEntity.getUsername());
+    userForAdminDto.setUsername(rawUserEntity.getUsername());
     userForAdminDto.setPassword("Password");
     userForAdminDto.setRoles(Set.of(Role.ADMIN));
 
-    rawEntity = service.create(rawEntity);
+    rawUserEntity = service.create(rawUserEntity);
 
     Assertions.assertThrows(
         ConflictException.class, () -> service.createFromUserForAdminDto(userForAdminDto)
     );
 
-    service.delete(rawEntity.getId());
+    service.delete(rawUserEntity.getId());
 
   }
 
@@ -262,11 +262,11 @@ class UserServiceIntegrationTest {
   @Test
   void updateFromUserForAdminDtoByIdSuccess() {
 
-    rawEntity = service.create(rawEntity);
+    rawUserEntity = service.create(rawUserEntity);
 
-    var oldUsername = rawEntity.getUsername();
-    var oldPassword = rawEntity.getPassword();
-    var oldRoles = new HashSet<>(rawEntity.getRoles());
+    var oldUsername = rawUserEntity.getUsername();
+    var oldPassword = rawUserEntity.getPassword();
+    var oldRoles = new HashSet<>(rawUserEntity.getRoles());
 
     var newUsername = "newName";
     var newPassword = "newPassword";
@@ -278,12 +278,12 @@ class UserServiceIntegrationTest {
     userForAdminDto.setRoles(newRoles);
 
 
-    var actual = service.updateFromUserForAdminDtoById(rawEntity.getId(), userForAdminDto);
+    var actual = service.updateFromUserForAdminDtoById(rawUserEntity.getId(), userForAdminDto);
 
     Assertions.assertNotNull(actual);
 
     Assertions.assertNotNull(actual);
-    Assertions.assertEquals(rawEntity.getId(), actual.getId());
+    Assertions.assertEquals(rawUserEntity.getId(), actual.getId());
     Assertions.assertEquals(userForAdminDto.getUsername(), actual.getUsername());
     Assertions.assertNotEquals(oldUsername, actual.getUsername());
     Assertions.assertNotEquals(userForAdminDto.getPassword(), actual.getPassword());
@@ -299,15 +299,15 @@ class UserServiceIntegrationTest {
   void updateFromUserForAdminDtoByIdShouldThrowConflictException() {
 
     var userForAdminDto = new UserForAdminDto();
-    userForAdminDto.setUsername(rawEntity.getUsername());
+    userForAdminDto.setUsername(rawUserEntity.getUsername());
     userForAdminDto.setPassword("Password");
     userForAdminDto.setRoles(new HashSet<>(Set.of(Role.ADMIN)));
 
-    var firstId = service.create(rawEntity).getId();
+    var firstId = service.create(rawUserEntity).getId();
 
     var secondEntity = new UserEntity(
-        "newName", rawEntity.getPassword(), new HashSet<>(Set.of(Role.ADMIN)),
-        rawEntity.getVotedFor(), rawEntity.getDateVote());
+        "newName", rawUserEntity.getPassword(), new HashSet<>(Set.of(Role.ADMIN)),
+        rawUserEntity.getVotedFor(), rawUserEntity.getDateVote());
 
     secondEntity = service.create(secondEntity);
 
@@ -317,7 +317,7 @@ class UserServiceIntegrationTest {
         () -> service.updateFromUserForAdminDtoById(finalSecondEntity.getId(), userForAdminDto)
     );
 
-    service.delete(rawEntity.getId());
+    service.delete(rawUserEntity.getId());
     service.delete(firstId);
 
   }
@@ -339,10 +339,10 @@ class UserServiceIntegrationTest {
   @Test
   void updateFromUserForUserDtoSuccess() {
 
-    rawEntity = service.create(rawEntity);
+    rawUserEntity = service.create(rawUserEntity);
 
-    var oldUsername = rawEntity.getUsername();
-    var oldPassword = rawEntity.getPassword();
+    var oldUsername = rawUserEntity.getUsername();
+    var oldPassword = rawUserEntity.getPassword();
 
     var newUsername = "newName";
     var newPassword = "newPassword";
@@ -352,12 +352,12 @@ class UserServiceIntegrationTest {
         .password(newPassword)
         .build();
 
-    var actual = service.updateByIdFromUserDto(rawEntity.getId(), userDto);
+    var actual = service.updateByIdFromUserDto(rawUserEntity.getId(), userDto);
 
     Assertions.assertNotNull(actual);
 
     Assertions.assertNotNull(actual);
-    Assertions.assertEquals(rawEntity.getId(), actual.getId());
+    Assertions.assertEquals(rawUserEntity.getId(), actual.getId());
     Assertions.assertEquals(userDto.getUsername(), actual.getUsername());
     Assertions.assertNotEquals(oldUsername, actual.getUsername());
     Assertions.assertNotEquals(userDto.getPassword(), actual.getPassword());
@@ -384,7 +384,7 @@ class UserServiceIntegrationTest {
             .password("pass1")
             .build()
     );
-    rawEntity = service.create(rawEntity);
+    rawUserEntity = service.create(rawUserEntity);
 
     var newUserDto = UserDto.builder()
         .username(firstEntity.getUsername())
@@ -392,10 +392,10 @@ class UserServiceIntegrationTest {
         .build();
 
     Assertions.assertThrows(ConflictException.class,
-        () -> service.updateByIdFromUserDto(rawEntity.getId(), newUserDto));
+        () -> service.updateByIdFromUserDto(rawUserEntity.getId(), newUserDto));
 
 
-    service.delete(rawEntity.getId());
+    service.delete(rawUserEntity.getId());
     service.delete(firstEntity.getId());
   }
 

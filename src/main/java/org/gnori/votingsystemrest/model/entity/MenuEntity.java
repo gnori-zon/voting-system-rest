@@ -27,5 +27,6 @@ public class MenuEntity extends BaseEntity{
   private String name;
 
   @JdbcTypeCode(SqlTypes.JSON)
+  @Column(name = "item_list")
   private List<Item> itemList;
 }

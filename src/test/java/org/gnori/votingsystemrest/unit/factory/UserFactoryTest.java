@@ -23,7 +23,7 @@ class UserFactoryTest extends AbstractFactoryTest<UserDto, UserEntity> {
   @Test
   void convertFromTest1() {
 
-    var raw = UserDto.builder()
+    var rawUserDto = UserDto.builder()
         .id(5)
         .username("un-1")
         .password("pw-1")
@@ -31,72 +31,72 @@ class UserFactoryTest extends AbstractFactoryTest<UserDto, UserEntity> {
         .build();
 
     var expectedValue = UserEntity.builder()
-        .username(raw.getUsername())
-        .password(raw.getPassword())
+        .username(rawUserDto.getUsername())
+        .password(rawUserDto.getPassword())
         .build();
 
-    convertFromDtoTest(raw, expectedValue);
+    convertFromDtoTest(rawUserDto, expectedValue);
 
   }
 
   @Test
   void convertFromTest2() {
 
-    var raw = UserEntity.builder()
+    var rawUserEntity = UserEntity.builder()
         .username("un-1")
         .password("pw-1")
         .votedFor(1)
         .dateVote(LocalDate.now())
         .roles(new HashSet<>(Set.of(Role.ADMIN)))
         .build();
-    raw.setId(5);
+    rawUserEntity.setId(5);
 
     var expectedValue = UserDto.builder()
-        .id(raw.getId())
-        .username(raw.getUsername())
-        .roles(raw.getRoles())
+        .id(rawUserEntity.getId())
+        .username(rawUserEntity.getUsername())
+        .roles(rawUserEntity.getRoles())
         .build();
 
-    convertFromEntityTest(raw, expectedValue);
+    convertFromEntityTest(rawUserEntity, expectedValue);
 
   }
 
   @Test
   void convertAllFromTest() {
 
-    var entity1 = UserEntity.builder()
+    var userEntity1 = UserEntity.builder()
         .username("un-1")
         .password("pw-1")
         .votedFor(1)
         .dateVote(LocalDate.now())
         .roles(new HashSet<>(Set.of(Role.ADMIN)))
         .build();
-    entity1.setId(5);
+    userEntity1.setId(5);
 
-    var entity2 = UserEntity.builder()
+    var userEntity2 = UserEntity.builder()
         .username("un-2")
         .password("pw-2")
         .votedFor(2)
         .dateVote(LocalDate.now())
         .roles(new HashSet<>(Set.of(Role.USER)))
         .build();
-    entity1.setId(6);
+    userEntity2.setId(6);
 
-    var raw = new ArrayList<>(List.of(entity1, entity2));
+    var raw = new ArrayList<>(List.of(userEntity1, userEntity2));
 
-    var dto1 = UserDto.builder()
-        .id(entity1.getId())
-        .username(entity1.getUsername())
-        .roles(entity1.getRoles())
+    var userDto1 = UserDto.builder()
+        .id(userEntity1.getId())
+        .username(userEntity1.getUsername())
+        .roles(userEntity1.getRoles())
         .build();
 
-    var dto2 =UserDto.builder()
-        .id(entity2.getId())
-        .username(entity2.getUsername())
-        .roles(entity2.getRoles())
+    var userDto2 =UserDto.builder()
+        .id(userEntity2.getId())
+        .username(userEntity2.getUsername())
+        .roles(userEntity2.getRoles())
         .build();
 
-    var expectedValue = new ArrayList<>(List.of(dto1, dto2));
+    var expectedValue = new ArrayList<>(List.of(userDto1, userDto2));
 
     convertFromListEntityTest(raw, expectedValue);
 

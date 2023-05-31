@@ -5,7 +5,7 @@ import java.time.LocalDate;
 import java.util.List;
 import org.gnori.votingsystemrest.dao.impl.RestaurantDao;
 import org.gnori.votingsystemrest.dao.impl.UserDao;
-import org.gnori.votingsystemrest.error.NotFoundException;
+import org.gnori.votingsystemrest.error.exceptions.impl.NotFoundException;
 import org.gnori.votingsystemrest.factory.impl.VoteFactory;
 import org.gnori.votingsystemrest.model.Item;
 import org.gnori.votingsystemrest.model.entity.MenuEntity;
@@ -121,7 +121,7 @@ class VoteServiceIntegrationTest {
   @Test
   void getVoteSuccess() {
 
-    var actual = service.getVote(votedUserId);
+    var actual = service.getVoteByUserId(votedUserId);
 
     Assertions.assertNotNull(actual);
 
@@ -132,14 +132,14 @@ class VoteServiceIntegrationTest {
   @Test
   void getVoteShouldThrowNotFoundExceptionByUser() {
 
-    Assertions.assertThrows(NotFoundException.class, () -> service.getVote(100));
+    Assertions.assertThrows(NotFoundException.class, () -> service.getVoteByUserId(100));
 
   }
 
   @Test
   void getVoteShouldThrowNotFoundExceptionByVote() {
 
-    Assertions.assertThrows(NotFoundException.class, () -> service.getVote(unvotedUserId));
+    Assertions.assertThrows(NotFoundException.class, () -> service.getVoteByUserId(unvotedUserId));
 
   }
 
@@ -152,7 +152,7 @@ class VoteServiceIntegrationTest {
     Assertions.assertNotNull(beforeDeleteUser.getDateVote());
     Assertions.assertNotNull(beforeDeleteUser.getVotedFor());
 
-    service.deleteVote(votedUserId);
+    service.deleteVoteByUserId(votedUserId);
 
     var afterDeleteUser = userDao.findById(votedUserId).orElse(null);
     Assertions.assertNotNull(afterDeleteUser);

@@ -2,6 +2,7 @@ package org.gnori.votingsystemrest.model.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,18 +14,19 @@ import org.gnori.votingsystemrest.model.entity.RestaurantEntity;
 @JsonInclude(Include.NON_NULL)
 public class VoteDto extends RestaurantDto {
 
+  @JsonProperty("number_of_votes")
   protected Integer numberOfVotes;
 
-  public VoteDto(RestaurantEntity entity, Integer numberOfVotes) {
+  public VoteDto(RestaurantEntity restaurantEntity, Integer numberOfVotes) {
 
-    id = entity.getId();
-    name = entity.getName();
+    id = restaurantEntity.getId();
+    name = restaurantEntity.getName();
     launchMenu = new MenuDto();
 
-    if (entity.getLaunchMenu() != null) {
-      launchMenu.setId(entity.getLaunchMenu().getId());
-      launchMenu.setName(entity.getLaunchMenu().getName());
-      launchMenu.setItemList(entity.getLaunchMenu().getItemList());
+    if (restaurantEntity.getLaunchMenu() != null) {
+      launchMenu.setId(restaurantEntity.getLaunchMenu().getId());
+      launchMenu.setName(restaurantEntity.getLaunchMenu().getName());
+      launchMenu.setItemList(restaurantEntity.getLaunchMenu().getItemList());
     }
 
     this.numberOfVotes = numberOfVotes != null ? numberOfVotes : 0;

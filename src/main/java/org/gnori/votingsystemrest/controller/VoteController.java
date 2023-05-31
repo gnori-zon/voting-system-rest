@@ -35,7 +35,7 @@ public class VoteController {
   @GetMapping(value = USER_VOTE_URL, produces = MediaType.APPLICATION_JSON_VALUE)
   public VoteDto get(@PathVariable Integer userId) {
 
-    return voteService.getVote(userId);
+    return voteService.getVoteByUserId(userId);
 
   }
 
@@ -51,7 +51,7 @@ public class VoteController {
   @PostMapping(value = USER_VOTE_URL, produces = MediaType.APPLICATION_JSON_VALUE)
   public VoteDto create(@PathVariable Integer userId, @RequestParam Integer restaurantId) {
 
-    return voteService.createVote(userId, restaurantId);
+    return voteService.createVoteByUserIdAndRestaurantId(userId, restaurantId);
 
   }
 
@@ -59,7 +59,7 @@ public class VoteController {
   @PutMapping(value = USER_VOTE_URL, produces = MediaType.APPLICATION_JSON_VALUE)
   public VoteDto update(@PathVariable Integer userId, @RequestParam Integer restaurantId) {
 
-    return voteService.updateVote(userId, restaurantId);
+    return voteService.updateVoteByUserIdAndRestaurantId(userId, restaurantId);
 
   }
 
@@ -67,7 +67,7 @@ public class VoteController {
   @DeleteMapping(USER_VOTE_URL)
   public void delete(@PathVariable Integer userId) {
 
-    voteService.deleteVote(userId);
+    voteService.deleteVoteByUserId(userId);
 
   }
 

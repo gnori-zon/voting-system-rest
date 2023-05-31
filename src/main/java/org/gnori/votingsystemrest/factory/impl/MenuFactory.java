@@ -1,14 +1,12 @@
 package org.gnori.votingsystemrest.factory.impl;
 
 import java.util.List;
-import lombok.RequiredArgsConstructor;
 import org.gnori.votingsystemrest.factory.BaseFactory;
 import org.gnori.votingsystemrest.model.dto.MenuDto;
 import org.gnori.votingsystemrest.model.entity.MenuEntity;
 import org.springframework.stereotype.Component;
 
 @Component
-@RequiredArgsConstructor
 public class MenuFactory implements BaseFactory<MenuDto, MenuEntity> {
 
   public MenuDto convertFrom(MenuEntity menuEntity) {

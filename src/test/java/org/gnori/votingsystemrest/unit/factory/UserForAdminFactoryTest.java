@@ -23,85 +23,85 @@ class UserForAdminFactoryTest extends AbstractFactoryTest<UserForAdminDto, UserE
   @Test
   void convertFromTest1() {
 
-    var raw = new UserForAdminDto();
-    raw.setId(5);
-    raw.setUsername("un-1");
-    raw.setPassword("pw-1");
-    raw.setRoles(new HashSet<>(Set.of(Role.ADMIN)));
+    var rawUserForAdminDto = new UserForAdminDto();
+    rawUserForAdminDto.setId(5);
+    rawUserForAdminDto.setUsername("un-1");
+    rawUserForAdminDto.setPassword("pw-1");
+    rawUserForAdminDto.setRoles(new HashSet<>(Set.of(Role.ADMIN)));
 
     var expectedValue = UserEntity.builder()
-        .username(raw.getUsername())
-        .password(raw.getPassword())
-        .roles(raw.getRoles())
+        .username(rawUserForAdminDto.getUsername())
+        .password(rawUserForAdminDto.getPassword())
+        .roles(rawUserForAdminDto.getRoles())
         .build();
 
-    convertFromDtoTest(raw, expectedValue);
+    convertFromDtoTest(rawUserForAdminDto, expectedValue);
 
   }
 
   @Test
   void convertFromTest2() {
 
-    var raw = UserEntity.builder()
+    var rawUserEntity = UserEntity.builder()
         .username("un-1")
         .password("pw-1")
         .votedFor(1)
         .dateVote(LocalDate.now())
         .roles(new HashSet<>(Set.of(Role.ADMIN)))
         .build();
-    raw.setId(5);
+    rawUserEntity.setId(5);
 
     var expectedValue = new UserForAdminDto();
-    expectedValue.setId(raw.getId());
-    expectedValue.setUsername(raw.getUsername());
-    expectedValue.setRoles(raw.getRoles());
-    expectedValue.setVotedFor(raw.getVotedFor());
-    expectedValue.setDateVote(raw.getDateVote());
+    expectedValue.setId(rawUserEntity.getId());
+    expectedValue.setUsername(rawUserEntity.getUsername());
+    expectedValue.setRoles(rawUserEntity.getRoles());
+    expectedValue.setVotedFor(rawUserEntity.getVotedFor());
+    expectedValue.setDateVote(rawUserEntity.getDateVote());
 
-    convertFromEntityTest(raw, expectedValue);
+    convertFromEntityTest(rawUserEntity, expectedValue);
 
   }
 
   @Test
   void convertAllFromTest() {
 
-    var entity1 = UserEntity.builder()
+    var userEntity1 = UserEntity.builder()
         .username("un-1")
         .password("pw-1")
         .votedFor(1)
         .dateVote(LocalDate.now())
         .roles(new HashSet<>(Set.of(Role.ADMIN)))
         .build();
-    entity1.setId(5);
+    userEntity1.setId(5);
 
-    var entity2 = UserEntity.builder()
+    var userEntity2 = UserEntity.builder()
         .username("un-2")
         .password("pw-2")
         .votedFor(2)
         .dateVote(LocalDate.now())
         .roles(new HashSet<>(Set.of(Role.USER)))
         .build();
-    entity1.setId(6);
+    userEntity2.setId(6);
 
-    var raw = new ArrayList<>(List.of(entity1, entity2));
+    var raw = new ArrayList<>(List.of(userEntity1, userEntity2));
 
-    var dto1 = new UserForAdminDto();
-    dto1.setId(entity1.getId());
-    dto1.setUsername(entity1.getUsername());
-    dto1.setPassword(entity1.getPassword());
-    dto1.setRoles(entity1.getRoles());
-    dto1.setVotedFor(entity1.getVotedFor());
-    dto1.setDateVote(entity1.getDateVote());
+    var userForAdminDto1 = new UserForAdminDto();
+    userForAdminDto1.setId(userEntity1.getId());
+    userForAdminDto1.setUsername(userEntity1.getUsername());
+    userForAdminDto1.setPassword(userEntity1.getPassword());
+    userForAdminDto1.setRoles(userEntity1.getRoles());
+    userForAdminDto1.setVotedFor(userEntity1.getVotedFor());
+    userForAdminDto1.setDateVote(userEntity1.getDateVote());
 
-    var dto2 = new UserForAdminDto();
-    dto2.setId(entity2.getId());
-    dto2.setUsername(entity2.getUsername());
-    dto2.setPassword(entity2.getPassword());
-    dto2.setRoles(entity2.getRoles());
-    dto2.setVotedFor(entity2.getVotedFor());
-    dto2.setDateVote(entity2.getDateVote());
+    var userForAdminDto2 = new UserForAdminDto();
+    userForAdminDto2.setId(userEntity2.getId());
+    userForAdminDto2.setUsername(userEntity2.getUsername());
+    userForAdminDto2.setPassword(userEntity2.getPassword());
+    userForAdminDto2.setRoles(userEntity2.getRoles());
+    userForAdminDto2.setVotedFor(userEntity2.getVotedFor());
+    userForAdminDto2.setDateVote(userEntity2.getDateVote());
 
-    var expectedValue = new ArrayList<>(List.of(dto1, dto2));
+    var expectedValue = new ArrayList<>(List.of(userForAdminDto1, userForAdminDto2));
 
     convertFromListEntityTest(raw, expectedValue);
 

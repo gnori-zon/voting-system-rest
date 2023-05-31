@@ -1,6 +1,6 @@
 package org.gnori.votingsystemrest.unit.service;
 
-import org.gnori.votingsystemrest.error.ForbiddenException;
+import org.gnori.votingsystemrest.error.exceptions.impl.ForbiddenException;
 import org.gnori.votingsystemrest.model.dto.UserDto;
 import org.gnori.votingsystemrest.model.entity.UserEntity;
 import org.gnori.votingsystemrest.service.impl.UserService;
@@ -28,9 +28,9 @@ class AuthenticationServiceImplTest {
 
     String username = "user";
     String password = "pass";
-    var raw = UserDto.builder().username(username).password(password).build();
+    var rawUserDto = UserDto.builder().username(username).password(password).build();
 
-    service.authenticate(raw);
+    service.authenticate(rawUserDto);
 
     Mockito.verify(authManagerMock).authenticate(
         new UsernamePasswordAuthenticationToken(username, password)
@@ -45,9 +45,9 @@ class AuthenticationServiceImplTest {
     var token = "*******TOKEN";
     var indexBeginToken = 7;
     var username = "user";
-    var user = UserDto.builder().username(username).build();
+    var userDto = UserDto.builder().username(username).build();
 
-    Mockito.when(userServiceMock.getUserDtoById(id)).thenReturn(user);
+    Mockito.when(userServiceMock.getUserDtoById(id)).thenReturn(userDto);
     Mockito.when(jwtServiceMock.extractUsername(token.substring(indexBeginToken)))
         .thenReturn(username);
 
@@ -62,9 +62,9 @@ class AuthenticationServiceImplTest {
     var token = "*******TOKEN";
     var indexBeginToken = 7;
     var username = "user";
-    var user = UserDto.builder().username(username).build();
+    var userDto = UserDto.builder().username(username).build();
 
-    Mockito.when(userServiceMock.getUserDtoById(id)).thenReturn(user);
+    Mockito.when(userServiceMock.getUserDtoById(id)).thenReturn(userDto);
     Mockito.when(jwtServiceMock.extractUsername(token.substring(indexBeginToken)))
         .thenReturn("otherUsername");
 
@@ -80,13 +80,13 @@ class AuthenticationServiceImplTest {
 
     var username = "user";
     var token = "token";
-    var user = UserDto.builder().username(username).build();
+    var userDto = UserDto.builder().username(username).build();
     var userEntity = UserEntity.builder().build();
 
     Mockito.when(userServiceMock.getByUsername(username)).thenReturn(userEntity);
     Mockito.when(jwtServiceMock.generateToken(userEntity)).thenReturn(token);
 
-    Assertions.assertEquals(token, service.generateNewToken(user));
+    Assertions.assertEquals(token, service.generateNewToken(userDto));
 
   }
 

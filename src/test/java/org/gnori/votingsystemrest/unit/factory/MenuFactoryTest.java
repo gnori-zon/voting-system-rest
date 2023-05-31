@@ -21,7 +21,7 @@ class MenuFactoryTest extends AbstractFactoryTest<MenuDto, MenuEntity> {
   @Test
   void convertFromTest1() {
 
-    var raw = MenuDto.builder()
+    var rawMenu = MenuDto.builder()
         .id(5)
         .name("name")
         .itemList(new ArrayList<>(List.of(
@@ -31,71 +31,71 @@ class MenuFactoryTest extends AbstractFactoryTest<MenuDto, MenuEntity> {
         .build();
 
     var expectedValue = MenuEntity.builder()
-        .name(raw.getName())
-        .itemList(raw.getItemList())
+        .name(rawMenu.getName())
+        .itemList(rawMenu.getItemList())
         .build();
 
-    convertFromDtoTest(raw, expectedValue);
+    convertFromDtoTest(rawMenu, expectedValue);
 
   }
 
   @Test
   void convertFromTest2() {
 
-    var raw = MenuEntity.builder()
+    var rawMenu = MenuEntity.builder()
         .name("name")
         .itemList(new ArrayList<>(List.of(
             new Item("i-1", BigDecimal.valueOf(100)),
             new Item("i-2", BigDecimal.valueOf(150))))
         )
         .build();
-    raw.setId(5);
+    rawMenu.setId(5);
 
     var expectedValue = MenuDto.builder()
-        .id(raw.getId())
-        .name(raw.getName())
-        .itemList(raw.getItemList())
+        .id(rawMenu.getId())
+        .name(rawMenu.getName())
+        .itemList(rawMenu.getItemList())
         .build();
 
-    convertFromEntityTest(raw, expectedValue);
+    convertFromEntityTest(rawMenu, expectedValue);
 
   }
   @Test
   void convertAllFromTest() {
 
-    var entity1 = MenuEntity.builder()
+    var menuEntity1 = MenuEntity.builder()
         .name("name1")
         .itemList(new ArrayList<>(List.of(
             new Item("i-1", BigDecimal.valueOf(100)),
             new Item("i-2", BigDecimal.valueOf(150))))
         )
         .build();
-    entity1.setId(5);
+    menuEntity1.setId(5);
 
-    var entity2 = MenuEntity.builder()
+    var menuEntity2 = MenuEntity.builder()
         .name("name2")
         .itemList(new ArrayList<>(List.of(
             new Item("i-3", BigDecimal.valueOf(150)),
             new Item("i-4", BigDecimal.valueOf(200))))
         )
         .build();
-    entity2.setId(6);
+    menuEntity2.setId(6);
 
-    var raw = new ArrayList<>(List.of(entity1, entity2));
+    var raw = new ArrayList<>(List.of(menuEntity1, menuEntity2));
 
-    var dto1 = MenuDto.builder()
-        .id(entity1.getId())
-        .name(entity1.getName())
-        .itemList(entity1.getItemList())
+    var menuDto1 = MenuDto.builder()
+        .id(menuEntity1.getId())
+        .name(menuEntity1.getName())
+        .itemList(menuEntity1.getItemList())
         .build();
 
-    var dto2 = MenuDto.builder()
-        .id(entity2.getId())
-        .name(entity2.getName())
-        .itemList(entity2.getItemList())
+    var menuDto2 = MenuDto.builder()
+        .id(menuEntity2.getId())
+        .name(menuEntity2.getName())
+        .itemList(menuEntity2.getItemList())
         .build();
 
-    var expectedValue = new ArrayList<>(List.of(dto1, dto2));
+    var expectedValue = new ArrayList<>(List.of(menuDto1, menuDto2));
 
     convertFromListEntityTest(raw, expectedValue);
 

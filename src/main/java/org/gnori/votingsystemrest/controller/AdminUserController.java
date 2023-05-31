@@ -53,30 +53,35 @@ public class AdminUserController {
   }
 
   @ResponseStatus(HttpStatus.CREATED)
-  @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-  public UserForAdminDto create(@Validated(ValidationOfAdmin.class) @RequestBody UserForAdminDto userForAdminDto) {
+  @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE,
+      produces = MediaType.APPLICATION_JSON_VALUE)
+  public UserForAdminDto create(
+      @Validated(ValidationOfAdmin.class) @RequestBody UserForAdminDto userForAdminDto) {
 
-    var responseDto =  userService.createFromUserForAdminDto(userForAdminDto);
+    var responseUserForAdminDto =  userService.createFromUserForAdminDto(userForAdminDto);
 
     var token = authenticationService.generateNewToken(userForAdminDto);
 
-    responseDto.setToken(token);
+    responseUserForAdminDto.setToken(token);
 
-    return responseDto;
+    return responseUserForAdminDto;
 
   }
 
   @ResponseStatus(HttpStatus.OK)
-  @PatchMapping(value = ADMIN_USERS_WITH_ID_URL, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-  public UserForAdminDto update(@PathVariable Integer userId, @Validated(AdvancedValidation.class) @RequestBody UserForAdminDto userForAdminDto) {
+  @PatchMapping(value = ADMIN_USERS_WITH_ID_URL,
+      consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+  public UserForAdminDto update(
+      @PathVariable Integer userId,
+      @Validated(AdvancedValidation.class) @RequestBody UserForAdminDto userForAdminDto) {
 
-    var responseDto = userService.updateFromUserForAdminDtoById(userId, userForAdminDto);
+    var responseUserForAdminDto = userService.updateFromUserForAdminDtoById(userId, userForAdminDto);
 
     var token = authenticationService.generateNewToken(userForAdminDto);
 
-    responseDto.setToken(token);
+    responseUserForAdminDto.setToken(token);
 
-    return responseDto;
+    return responseUserForAdminDto;
 
   }
 

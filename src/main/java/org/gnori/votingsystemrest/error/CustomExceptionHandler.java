@@ -2,6 +2,8 @@ package org.gnori.votingsystemrest.error;
 
 import java.util.HashMap;
 import java.util.Map;
+import org.gnori.votingsystemrest.error.exceptions.BusinessException;
+import org.gnori.votingsystemrest.model.dto.error.ErrorDto;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -41,31 +43,32 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
 
   @Override
   protected ResponseEntity<Object> handleMethodArgumentNotValid(@NonNull MethodArgumentNotValidException ex,
-      @NonNull HttpHeaders headers,@NonNull HttpStatusCode status,@NonNull WebRequest request) {
+      @NonNull HttpHeaders headers,@NonNull HttpStatusCode statusCode,@NonNull WebRequest request) {
 
     var message = "Invalid request content.";
 
-    Map<String, String> errorsMap = new HashMap<>();
+    Map<String, String> fieldErrors = new HashMap<>();
 
     ex.getBindingResult()
         .getFieldErrors()
         .forEach(
-            error -> errorsMap.put(error.getField(), error.getDefaultMessage())
+            error -> fieldErrors.put(error.getField(), error.getDefaultMessage())
         );
 
-    var error = ErrorDto.builder()
+    var errorDto = ErrorDto.builder()
         .error(ex.getBody().getDetail())
         .error(message)
         .build();
 
-    if (!errorsMap.isEmpty()) {
-      error.setUserError(errorsMap);
+    if (!fieldErrors.isEmpty()) {
+      errorDto.setUserError(fieldErrors);
     }
 
     return ResponseEntity
-        .status(status)
+        .status(statusCode)
         .headers(headers)
-        .body(error);
+        .body(errorDto);
 
   }
+
 }

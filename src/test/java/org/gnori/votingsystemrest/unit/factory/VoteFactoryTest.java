@@ -21,7 +21,7 @@ class VoteFactoryTest {
   @Test
   void convertFromTest(){
 
-    var raw = RestaurantEntity.builder()
+    var rawRestaurantEntity = RestaurantEntity.builder()
         .name("r-1")
         .launchMenu(MenuEntity.builder()
             .name("m-1")
@@ -29,12 +29,12 @@ class VoteFactoryTest {
             .build())
         .updateMenuDate(LocalDate.now())
         .build();
-    raw.getLaunchMenu().setId(5);
-    raw.setId(5);
+    rawRestaurantEntity.getLaunchMenu().setId(5);
+    rawRestaurantEntity.setId(5);
 
-    var number = 8;
-    var expectedValue = new VoteDto(raw, number);
+    var numberOfVotes = 8;
+    var expectedValue = new VoteDto(rawRestaurantEntity, numberOfVotes);
 
-    Assertions.assertEquals(expectedValue, voteFactory.convertFrom(raw, number));
+    Assertions.assertEquals(expectedValue, voteFactory.convertFrom(rawRestaurantEntity, numberOfVotes));
   }
 }

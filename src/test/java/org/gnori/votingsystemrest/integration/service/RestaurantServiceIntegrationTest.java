@@ -5,8 +5,8 @@ import java.time.LocalDate;
 import java.util.List;
 import org.gnori.votingsystemrest.dao.impl.MenuDao;
 import org.gnori.votingsystemrest.dao.impl.RestaurantDao;
-import org.gnori.votingsystemrest.error.ConflictException;
-import org.gnori.votingsystemrest.error.NotFoundException;
+import org.gnori.votingsystemrest.error.exceptions.impl.ConflictException;
+import org.gnori.votingsystemrest.error.exceptions.impl.NotFoundException;
 import org.gnori.votingsystemrest.factory.impl.MenuFactory;
 import org.gnori.votingsystemrest.factory.impl.RestaurantFactory;
 import org.gnori.votingsystemrest.model.Item;
@@ -26,7 +26,7 @@ class RestaurantServiceIntegrationTest {
 
   private final RestaurantService service;
 
-  private RestaurantDto raw;
+  private RestaurantDto rawRestaurantDto;
   private Integer rawId;
   private Integer menuIdFromRaw;
 
@@ -41,7 +41,7 @@ class RestaurantServiceIntegrationTest {
   @BeforeEach
   void updateRaw(){
 
-    raw = RestaurantDto.builder()
+    rawRestaurantDto = RestaurantDto.builder()
         .id(5)
         .name("new Restaurant")
         .launchMenu(
@@ -56,8 +56,8 @@ class RestaurantServiceIntegrationTest {
         )
         .build();
 
-    rawId = raw.getId();
-    menuIdFromRaw = raw.getLaunchMenu().getId();
+    rawId = rawRestaurantDto.getId();
+    menuIdFromRaw = rawRestaurantDto.getLaunchMenu().getId();
 
   }
 
@@ -65,7 +65,7 @@ class RestaurantServiceIntegrationTest {
   @Test
   void getAllSuccess(){
 
-    var id = service.createFromRestaurantDto(raw).getId();
+    var idCreatedRestaurant = service.createFromRestaurantDto(rawRestaurantDto).getId();
 
     var actualAll = service.getAllRestaurantDto();
     var actual = actualAll.stream().findFirst().orElse(null);
@@ -75,36 +75,42 @@ class RestaurantServiceIntegrationTest {
     Assertions.assertEquals(1, actualAll.size());
     Assertions.assertNotNull(actual);
 
-    Assertions.assertEquals(raw.getName(), actual.getName());
-    Assertions.assertEquals(raw.getLaunchMenu().getName(), actual.getLaunchMenu().getName());
-    Assertions.assertEquals(raw.getLaunchMenu().getName(), actual.getLaunchMenu().getName());
-    Assertions.assertEquals(raw.getLaunchMenu().getItemList(), actual.getLaunchMenu().getItemList());
+    Assertions.assertEquals(rawRestaurantDto.getName(), actual.getName());
+    Assertions.assertEquals(
+        rawRestaurantDto.getLaunchMenu().getName(), actual.getLaunchMenu().getName());
+    Assertions.assertEquals(
+        rawRestaurantDto.getLaunchMenu().getName(), actual.getLaunchMenu().getName());
+    Assertions.assertEquals(
+        rawRestaurantDto.getLaunchMenu().getItemList(), actual.getLaunchMenu().getItemList());
 
     Assertions.assertNotEquals(rawId, actual.getId());
     Assertions.assertNotEquals(menuIdFromRaw, actual.getLaunchMenu().getId());
 
-    service.delete(id);
+    service.delete(idCreatedRestaurant);
 
   }
 
   @Test
   void getRestaurantDtoByIdSuccess(){
 
-    var id = service.createFromRestaurantDto(raw).getId();
+    var idCreatedRestaurant = service.createFromRestaurantDto(rawRestaurantDto).getId();
 
-    var actual = service.getRestaurantDtoById(id);
+    var actual = service.getRestaurantDtoById(idCreatedRestaurant);
 
     Assertions.assertNotNull(actual);
 
-    Assertions.assertEquals(raw.getName(), actual.getName());
-    Assertions.assertEquals(raw.getLaunchMenu().getName(), actual.getLaunchMenu().getName());
-    Assertions.assertEquals(raw.getLaunchMenu().getName(), actual.getLaunchMenu().getName());
-    Assertions.assertEquals(raw.getLaunchMenu().getItemList(), actual.getLaunchMenu().getItemList());
+    Assertions.assertEquals(rawRestaurantDto.getName(), actual.getName());
+    Assertions.assertEquals(
+        rawRestaurantDto.getLaunchMenu().getName(), actual.getLaunchMenu().getName());
+    Assertions.assertEquals(
+        rawRestaurantDto.getLaunchMenu().getName(), actual.getLaunchMenu().getName());
+    Assertions.assertEquals(
+        rawRestaurantDto.getLaunchMenu().getItemList(), actual.getLaunchMenu().getItemList());
 
     Assertions.assertNotEquals(rawId, actual.getId());
     Assertions.assertNotEquals(menuIdFromRaw, actual.getLaunchMenu().getId());
 
-    service.delete(id);
+    service.delete(idCreatedRestaurant);
 
   }
 
@@ -119,16 +125,19 @@ class RestaurantServiceIntegrationTest {
   @Test
   void createFromRestaurantDtoTestSuccess() {
 
-    service.createFromRestaurantDto(raw);
+    service.createFromRestaurantDto(rawRestaurantDto);
 
     var actual = service.getAll().stream().findFirst().orElse(null);
 
     Assertions.assertNotNull(actual);
 
-    Assertions.assertEquals(raw.getName(), actual.getName());
-    Assertions.assertEquals(raw.getLaunchMenu().getName(), actual.getLaunchMenu().getName());
-    Assertions.assertEquals(raw.getLaunchMenu().getName(), actual.getLaunchMenu().getName());
-    Assertions.assertEquals(raw.getLaunchMenu().getItemList(), actual.getLaunchMenu().getItemList());
+    Assertions.assertEquals(rawRestaurantDto.getName(), actual.getName());
+    Assertions.assertEquals(
+        rawRestaurantDto.getLaunchMenu().getName(), actual.getLaunchMenu().getName());
+    Assertions.assertEquals(
+        rawRestaurantDto.getLaunchMenu().getName(), actual.getLaunchMenu().getName());
+    Assertions.assertEquals(
+        rawRestaurantDto.getLaunchMenu().getItemList(), actual.getLaunchMenu().getItemList());
     Assertions.assertEquals(LocalDate.now(), actual.getUpdateMenuDate());
 
     Assertions.assertNotEquals(rawId, actual.getId());
@@ -140,69 +149,76 @@ class RestaurantServiceIntegrationTest {
   @Test
   void createFromRestaurantDtoTestShouldThrowConflictException() {
 
-    var id = service.createFromRestaurantDto(raw).getId();
+    var idCreatedRestaurant = service.createFromRestaurantDto(rawRestaurantDto).getId();
 
-    Assertions.assertThrows(ConflictException.class, () -> service.createFromRestaurantDto(raw));
+    Assertions.assertThrows(ConflictException.class,
+        () -> service.createFromRestaurantDto(rawRestaurantDto));
 
-    service.delete(id);
+    service.delete(idCreatedRestaurant);
   }
 
   // UPDATE
   @Test
   void updateByIdFromRestaurantDtoSuccess() {
 
-    var menu = raw.getLaunchMenu();
+    var createdMenu = rawRestaurantDto.getLaunchMenu();
 
-    raw.setLaunchMenu(null);
-    var id = service.createFromRestaurantDto(raw).getId();
+    rawRestaurantDto.setLaunchMenu(null);
+    var idCreatedRestaurant = service.createFromRestaurantDto(rawRestaurantDto).getId();
 
     var actual = service.getAll().stream().findFirst().orElse(null);
 
     Assertions.assertNotNull(actual);
 
-    Assertions.assertEquals(raw.getName(), actual.getName());
+    Assertions.assertEquals(rawRestaurantDto.getName(), actual.getName());
     Assertions.assertNull(actual.getLaunchMenu());
     Assertions.assertNull(actual.getUpdateMenuDate());
 
-    raw.setName("newName");
-    raw.setLaunchMenu(menu);
-    service.updateByIdFromRestaurantDto(id, raw);
+    rawRestaurantDto.setName("newName");
+    rawRestaurantDto.setLaunchMenu(createdMenu);
+    service.updateByIdFromRestaurantDto(idCreatedRestaurant, rawRestaurantDto);
 
     actual = service.getAll().stream().findFirst().orElse(null);
 
     Assertions.assertNotNull(actual);
 
-    Assertions.assertEquals(raw.getName(), actual.getName());
-    Assertions.assertEquals(raw.getLaunchMenu().getName(), actual.getLaunchMenu().getName());
-    Assertions.assertEquals(raw.getLaunchMenu().getName(), actual.getLaunchMenu().getName());
-    Assertions.assertEquals(raw.getLaunchMenu().getItemList(), actual.getLaunchMenu().getItemList());
+    Assertions.assertEquals(rawRestaurantDto.getName(), actual.getName());
+    Assertions.assertEquals(
+        rawRestaurantDto.getLaunchMenu().getName(), actual.getLaunchMenu().getName());
+    Assertions.assertEquals(
+        rawRestaurantDto.getLaunchMenu().getName(), actual.getLaunchMenu().getName());
+    Assertions.assertEquals(
+        rawRestaurantDto.getLaunchMenu().getItemList(), actual.getLaunchMenu().getItemList());
     Assertions.assertEquals(LocalDate.now(), actual.getUpdateMenuDate());
 
-    service.delete(id);
+    service.delete(idCreatedRestaurant);
 
   }
 
   @Test
   void updateByIdFromRestaurantDtoShouldThrowNotFoundException() {
 
-    Assertions.assertThrows(NotFoundException.class, () -> service.updateByIdFromRestaurantDto(rawId, raw));
+    Assertions.assertThrows(NotFoundException.class,
+        () -> service.updateByIdFromRestaurantDto(rawId, rawRestaurantDto));
 
   }
 
   @Test
   void updateByIdFromRestaurantDtoShouldThrowConflictException() {
 
-    var firstName = raw.getName();
-    var firstId = service.createFromRestaurantDto(raw).getId();
+    var nameFirstRestaurant = rawRestaurantDto.getName();
+    var idFirstRestaurant = service.createFromRestaurantDto(rawRestaurantDto).getId();
 
-    raw.setName("newSecondName");
-    var secondId = service.createFromRestaurantDto(raw).getId();
+    rawRestaurantDto.setName("newSecondName");
+    var idSecondRestaurant = service.createFromRestaurantDto(rawRestaurantDto).getId();
 
-    raw.setName(firstName);
-    Assertions.assertThrows(ConflictException.class, () -> service.updateByIdFromRestaurantDto(secondId, raw));
+    rawRestaurantDto.setName(nameFirstRestaurant);
 
-    service.delete(firstId);
-    service.delete(secondId);
+    Assertions.assertThrows(ConflictException.class,
+        () -> service.updateByIdFromRestaurantDto(idSecondRestaurant, rawRestaurantDto));
+
+    service.delete(idFirstRestaurant);
+    service.delete(idSecondRestaurant);
 
   }
 

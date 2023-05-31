@@ -1,14 +1,12 @@
 package org.gnori.votingsystemrest.factory.impl;
 
 import java.util.List;
-import lombok.RequiredArgsConstructor;
 import org.gnori.votingsystemrest.factory.BaseFactory;
 import org.gnori.votingsystemrest.model.dto.UserForAdminDto;
 import org.gnori.votingsystemrest.model.entity.UserEntity;
 import org.springframework.stereotype.Component;
 
 @Component
-@RequiredArgsConstructor
 public class UserForAdminFactory implements BaseFactory<UserForAdminDto, UserEntity> {
 
   public UserForAdminDto convertFrom(UserEntity userEntity) {

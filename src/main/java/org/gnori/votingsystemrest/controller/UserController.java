@@ -9,6 +9,7 @@ import org.gnori.votingsystemrest.model.dto.UserDto.ValidationOfUser;
 import org.gnori.votingsystemrest.service.impl.UserService;
 import org.gnori.votingsystemrest.service.security.AuthenticationService;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -40,7 +41,7 @@ public class UserController {
   AuthenticationService<UserDto, Integer, String> authenticationService;
 
   @ResponseStatus(HttpStatus.OK)
-  @GetMapping(USER_WITH_ID_URL)
+  @GetMapping(value = USER_WITH_ID_URL, produces = MediaType.APPLICATION_JSON_VALUE)
   public UserDto get(@PathVariable Integer userId, @RequestHeader(AUTH_HEADER) String token){
 
     authenticationService.validatePermission(userId, token);
@@ -50,24 +51,28 @@ public class UserController {
   }
 
   @ResponseStatus(HttpStatus.CREATED)
-  @PostMapping(USER_URL)
+  @PostMapping(value = USER_URL,
+      consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
   public UserDto register(@Validated(ValidationOfUser.class) @RequestBody UserDto userDto) {
 
-    var responseDto = userService.createFromUserDto(userDto);
+    var responseUserDto = userService.createFromUserDto(userDto);
 
     var token = authenticationService.generateNewToken(userDto);
 
-    responseDto.setToken(token);
+    responseUserDto.setToken(token);
 
-    return responseDto;
+    return responseUserDto;
 
   }
 
   @ResponseStatus(HttpStatus.OK)
-  @PutMapping(AUTH_URL)
-  public UserDto authenticateAndUpdateToken(@Validated(ValidationOfUser.class) @RequestBody UserDto userDto) {
+  @PutMapping(value = AUTH_URL,
+      consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+  public UserDto authenticateAndUpdateToken(
+      @Validated(ValidationOfUser.class) @RequestBody UserDto userDto) {
 
     authenticationService.authenticate(userDto);
+
     var token = authenticationService.generateNewToken(userDto);
 
     return UserDto.builder()
@@ -77,19 +82,22 @@ public class UserController {
   }
 
   @ResponseStatus(HttpStatus.OK)
-  @PatchMapping(USER_WITH_ID_URL)
-  public UserDto update(@PathVariable Integer userId, @RequestHeader(AUTH_HEADER) String token,
+  @PatchMapping(value = USER_WITH_ID_URL,
+      consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+  public UserDto update(
+      @PathVariable Integer userId,
+      @RequestHeader(AUTH_HEADER) String token,
       @Validated(AdvancedValidation.class) @RequestBody UserDto userDto){
 
     authenticationService.validatePermission(userId, token);
 
-    var responseDto = userService.updateByIdFromUserDto(userId, userDto);
+    var responseUserDto = userService.updateByIdFromUserDto(userId, userDto);
 
-    var newToken = authenticationService.generateNewToken(responseDto);
+    var newToken = authenticationService.generateNewToken(responseUserDto);
 
-    responseDto.setToken(newToken);
+    responseUserDto.setToken(newToken);
 
-    return responseDto;
+    return responseUserDto;
 
   }
 

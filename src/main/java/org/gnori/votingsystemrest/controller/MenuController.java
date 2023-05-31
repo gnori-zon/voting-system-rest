@@ -51,16 +51,20 @@ public class MenuController {
   @ResponseStatus(HttpStatus.OK)
   @PostMapping(value = RESTAURANT_MENU_URL,
       consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-  public MenuDto createForRestaurant(@PathVariable Integer restaurantId, @Validated @RequestBody MenuDto menuDto) {
+  public MenuDto createForRestaurant(
+      @PathVariable Integer restaurantId,
+      @Validated @RequestBody MenuDto menuDto) {
 
-    return menuService.createForRestaurant(restaurantId, menuDto);
+    return menuService.createByRestaurantIdFromMenuDto(restaurantId, menuDto);
 
   }
 
   @ResponseStatus(HttpStatus.OK)
   @PutMapping(value = RESTAURANT_MENU_URL,
       consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-  public MenuDto updateFromRestaurant(@PathVariable Integer restaurantId, @Validated  @RequestBody MenuDto menuDto) {
+  public MenuDto updateFromRestaurant(
+      @PathVariable Integer restaurantId,
+      @Validated  @RequestBody MenuDto menuDto) {
 
     return menuService.updateByRestaurantIdFromMenuDto(restaurantId, menuDto);
 

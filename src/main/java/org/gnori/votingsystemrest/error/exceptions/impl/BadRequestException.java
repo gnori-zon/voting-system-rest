@@ -1,5 +1,6 @@
-package org.gnori.votingsystemrest.error;
+package org.gnori.votingsystemrest.error.exceptions.impl;
 
+import org.gnori.votingsystemrest.error.exceptions.BusinessException;
 import org.springframework.http.HttpStatus;
 
 public class BadRequestException extends BusinessException {

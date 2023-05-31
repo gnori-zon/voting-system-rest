@@ -4,8 +4,8 @@ import java.time.LocalDate;
 import java.util.List;
 import org.gnori.votingsystemrest.dao.impl.MenuDao;
 import org.gnori.votingsystemrest.dao.impl.RestaurantDao;
-import org.gnori.votingsystemrest.error.ConflictException;
-import org.gnori.votingsystemrest.error.NotFoundException;
+import org.gnori.votingsystemrest.error.exceptions.impl.ConflictException;
+import org.gnori.votingsystemrest.error.exceptions.impl.NotFoundException;
 import org.gnori.votingsystemrest.factory.impl.MenuFactory;
 import org.gnori.votingsystemrest.model.dto.MenuDto;
 import org.gnori.votingsystemrest.model.entity.MenuEntity;
@@ -33,7 +33,7 @@ public class MenuService extends AbstractService<MenuEntity, MenuDao> {
   @Cacheable
   public MenuDto getMenuDtoByRestaurantId(Integer restaurantId) {
 
-    var menu = restaurantDao.findById(restaurantId)
+    var menuEntity = restaurantDao.findById(restaurantId)
         .orElseThrow(
             () -> new NotFoundException(
                 String.format("restaurant with id: %d is not exist", restaurantId),
@@ -41,7 +41,7 @@ public class MenuService extends AbstractService<MenuEntity, MenuDao> {
         ) // if restaurant is not exists
         .getLaunchMenu();
 
-    if (menu == null) {
+    if (menuEntity == null) {
 
       throw  new NotFoundException(
           String.format("menu from restaurant with id: %d is not exist", restaurantId),
@@ -49,7 +49,7 @@ public class MenuService extends AbstractService<MenuEntity, MenuDao> {
 
     }
 
-    return menuFactory.convertFrom(menu);
+    return menuFactory.convertFrom(menuEntity);
 
   }
 
@@ -60,7 +60,7 @@ public class MenuService extends AbstractService<MenuEntity, MenuDao> {
   }
 
   @CachePut(key = "#restaurantId")
-  public MenuDto createForRestaurant(Integer restaurantId, MenuDto menuDto) {
+  public MenuDto createByRestaurantIdFromMenuDto(Integer restaurantId, MenuDto menuDto) {
 
     return restaurantDao.findById(restaurantId).map(
         restaurantEntity -> {
@@ -73,14 +73,14 @@ public class MenuService extends AbstractService<MenuEntity, MenuDao> {
 
           }
 
-          var menu = create(menuFactory.convertFrom(menuDto));
+          var menuEntity = create(menuFactory.convertFrom(menuDto));
 
-          restaurantEntity.setLaunchMenu(menu);
+          restaurantEntity.setLaunchMenu(menuEntity);
           restaurantEntity.setUpdateMenuDate(LocalDate.now());
 
           restaurantDao.save(restaurantEntity);
 
-          menuDto.setId(menu.getId());
+          menuDto.setId(menuEntity.getId());
           return menuDto;
 
         }
@@ -126,14 +126,14 @@ public class MenuService extends AbstractService<MenuEntity, MenuDao> {
     restaurantDao.findById(restaurantId).ifPresent(
         restaurantEntity -> {
 
-          var menu = restaurantEntity.getLaunchMenu();
+          var menuEntity = restaurantEntity.getLaunchMenu();
 
           restaurantEntity.setUpdateMenuDate(null);
           restaurantEntity.setLaunchMenu(null);
           restaurantDao.save(restaurantEntity);
 
-          if (menu != null) {
-            delete(menu.getId());
+          if (menuEntity != null) {
+            delete(menuEntity.getId());
           }
 
         }

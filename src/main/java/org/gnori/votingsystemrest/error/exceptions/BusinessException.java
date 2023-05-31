@@ -1,4 +1,4 @@
-package org.gnori.votingsystemrest.error;
+package org.gnori.votingsystemrest.error.exceptions;
 
 import org.springframework.http.HttpStatus;
 

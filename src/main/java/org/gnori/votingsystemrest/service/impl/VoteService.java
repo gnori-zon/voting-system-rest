@@ -5,8 +5,8 @@ import java.time.LocalTime;
 import java.util.List;
 import org.gnori.votingsystemrest.dao.impl.RestaurantDao;
 import org.gnori.votingsystemrest.dao.impl.UserDao;
-import org.gnori.votingsystemrest.error.BadRequestException;
-import org.gnori.votingsystemrest.error.NotFoundException;
+import org.gnori.votingsystemrest.error.exceptions.impl.BadRequestException;
+import org.gnori.votingsystemrest.error.exceptions.impl.NotFoundException;
 import org.gnori.votingsystemrest.factory.impl.VoteFactory;
 import org.gnori.votingsystemrest.model.dto.VoteDto;
 import org.gnori.votingsystemrest.model.entity.UserEntity;
@@ -36,11 +36,11 @@ public class VoteService {
 
   }
   @Cacheable
-  public VoteDto getVote(Integer userId) {
+  public VoteDto getVoteByUserId(Integer userId) {
 
-    var user = validateAndGetUser(userId);
+    var userEntity = validateAndGetUser(userId);
 
-    if (!LocalDate.now().equals(user.getDateVote())) {
+    if (!LocalDate.now().equals(userEntity.getDateVote())) {
 
       throw new NotFoundException(
           String.format("user with id: %d is not voted today", userId),
@@ -48,7 +48,7 @@ public class VoteService {
 
     }
 
-    return prepareVoteDtoByRestaurantId(user.getVotedFor());
+    return prepareVoteDtoByRestaurantId(userEntity.getVotedFor());
 
   }
 
@@ -59,37 +59,37 @@ public class VoteService {
   }
 
   @CachePut(key = "#userId")
-  public VoteDto createVote(Integer userId, Integer restaurantId) {
+  public VoteDto createVoteByUserIdAndRestaurantId(Integer userId, Integer restaurantId) {
 
     validateTimeVote(LocalTime.of(11,0));
-    var user = validateAndGetUser(userId);
+    var userEntity = validateAndGetUser(userId);
 
-    if (LocalDate.now().equals(user.getDateVote())) {
+    if (LocalDate.now().equals(userEntity.getDateVote())) {
       throw new BadRequestException(
           String.format("user with id: %d is vote already", userId),
           HttpStatus.BAD_REQUEST);
     }
 
     validateRestaurant(restaurantId, LocalDate.now());
-    updateUserVoteParams(user, restaurantId, LocalDate.now());
+    updateUserVoteParams(userEntity, restaurantId, LocalDate.now());
 
     return prepareVoteDtoByRestaurantId(restaurantId);
 
   }
   @CachePut(key = "#userId")
-  public VoteDto updateVote(Integer userId, Integer restaurantId) {
+  public VoteDto updateVoteByUserIdAndRestaurantId(Integer userId, Integer restaurantId) {
 
     validateTimeVote(LocalTime.of(11,0));
-    var user = validateAndGetUser(userId);
+    var userEntity = validateAndGetUser(userId);
     validateRestaurant(restaurantId, LocalDate.now());
-    updateUserVoteParams(user, restaurantId, LocalDate.now());
+    updateUserVoteParams(userEntity, restaurantId, LocalDate.now());
 
     return prepareVoteDtoByRestaurantId(restaurantId);
 
   }
 
   @CacheEvict("vote")
-  public void deleteVote(Integer userId) {
+  public void deleteVoteByUserId(Integer userId) {
 
     updateUserVoteParams(validateAndGetUser(userId), null, null);
 
@@ -98,14 +98,14 @@ public class VoteService {
   // utils
   private VoteDto prepareVoteDtoByRestaurantId(Integer restaurantId) {
 
-    var restaurant = restaurantDao.findById(restaurantId).orElseThrow(
+    var restaurantEntity = restaurantDao.findById(restaurantId).orElseThrow(
         () -> new NotFoundException(
             String.format("restaurant with id: %d is not exist", restaurantId),
             HttpStatus.NOT_FOUND)
     );
     var numberOfVotes = userDao.countByVotedForAndDateVoteEquals(restaurantId, LocalDate.now());
 
-    return voteFactory.convertFrom(restaurant, numberOfVotes);
+    return voteFactory.convertFrom(restaurantEntity, numberOfVotes);
 
   }
 

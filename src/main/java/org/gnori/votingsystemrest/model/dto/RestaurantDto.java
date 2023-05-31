@@ -2,6 +2,7 @@ package org.gnori.votingsystemrest.model.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -24,6 +25,7 @@ public class RestaurantDto {
   protected String name;
 
   @Valid
+  @JsonProperty("launch_menu")
   protected MenuDto launchMenu = new MenuDto();
 
 }

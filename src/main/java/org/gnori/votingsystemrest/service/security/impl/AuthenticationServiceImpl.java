@@ -1,7 +1,7 @@
 package org.gnori.votingsystemrest.service.security.impl;
 
 import lombok.RequiredArgsConstructor;
-import org.gnori.votingsystemrest.error.ForbiddenException;
+import org.gnori.votingsystemrest.error.exceptions.impl.ForbiddenException;
 import org.gnori.votingsystemrest.model.dto.UserDto;
 import org.gnori.votingsystemrest.service.impl.UserService;
 import org.gnori.votingsystemrest.service.security.AuthenticationService;

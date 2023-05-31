@@ -1,4 +1,4 @@
-package org.gnori.votingsystemrest.error;
+package org.gnori.votingsystemrest.model.dto.error;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
