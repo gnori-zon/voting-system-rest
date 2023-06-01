@@ -4,6 +4,7 @@ import java.util.List;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.gnori.votingsystemrest.log.annotation.LogMethodExecutionTime;
 import org.gnori.votingsystemrest.model.dto.VoteDto;
 import org.gnori.votingsystemrest.service.impl.VoteService;
 import org.springframework.http.HttpStatus;
@@ -31,6 +32,7 @@ public class VoteController {
 
   VoteService voteService;
 
+  @LogMethodExecutionTime
   @ResponseStatus(HttpStatus.OK)
   @GetMapping(value = USER_VOTE_URL, produces = MediaType.APPLICATION_JSON_VALUE)
   public VoteDto get(@PathVariable Integer userId) {
@@ -39,6 +41,7 @@ public class VoteController {
 
   }
 
+  @LogMethodExecutionTime
   @ResponseStatus(HttpStatus.OK)
   @GetMapping(value = VOTES_URL, produces = MediaType.APPLICATION_JSON_VALUE)
   public List<VoteDto> getAll() {
@@ -47,6 +50,7 @@ public class VoteController {
 
   }
 
+  @LogMethodExecutionTime
   @ResponseStatus(HttpStatus.CREATED)
   @PostMapping(value = USER_VOTE_URL, produces = MediaType.APPLICATION_JSON_VALUE)
   public VoteDto create(@PathVariable Integer userId, @RequestParam Integer restaurantId) {
@@ -55,6 +59,7 @@ public class VoteController {
 
   }
 
+  @LogMethodExecutionTime
   @ResponseStatus(HttpStatus.OK)
   @PutMapping(value = USER_VOTE_URL, produces = MediaType.APPLICATION_JSON_VALUE)
   public VoteDto update(@PathVariable Integer userId, @RequestParam Integer restaurantId) {
@@ -63,6 +68,7 @@ public class VoteController {
 
   }
 
+  @LogMethodExecutionTime
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @DeleteMapping(USER_VOTE_URL)
   public void delete(@PathVariable Integer userId) {

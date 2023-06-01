@@ -3,6 +3,7 @@ package org.gnori.votingsystemrest.controller;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.gnori.votingsystemrest.log.annotation.LogMethodExecutionTime;
 import org.gnori.votingsystemrest.model.dto.UserDto;
 import org.gnori.votingsystemrest.model.dto.UserDto.AdvancedValidation;
 import org.gnori.votingsystemrest.model.dto.UserDto.ValidationOfUser;
@@ -40,6 +41,7 @@ public class UserController {
   UserService userService;
   AuthenticationService<UserDto, Integer, String> authenticationService;
 
+  @LogMethodExecutionTime
   @ResponseStatus(HttpStatus.OK)
   @GetMapping(value = USER_WITH_ID_URL, produces = MediaType.APPLICATION_JSON_VALUE)
   public UserDto get(@PathVariable Integer userId, @RequestHeader(AUTH_HEADER) String token){
@@ -50,6 +52,7 @@ public class UserController {
 
   }
 
+  @LogMethodExecutionTime
   @ResponseStatus(HttpStatus.CREATED)
   @PostMapping(value = USER_URL,
       consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -65,6 +68,7 @@ public class UserController {
 
   }
 
+  @LogMethodExecutionTime
   @ResponseStatus(HttpStatus.OK)
   @PutMapping(value = AUTH_URL,
       consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -81,6 +85,7 @@ public class UserController {
 
   }
 
+  @LogMethodExecutionTime
   @ResponseStatus(HttpStatus.OK)
   @PatchMapping(value = USER_WITH_ID_URL,
       consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -101,6 +106,7 @@ public class UserController {
 
   }
 
+  @LogMethodExecutionTime
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @DeleteMapping(USER_WITH_ID_URL)
   public void delete(@PathVariable Integer userId, @RequestHeader(AUTH_HEADER) String token){

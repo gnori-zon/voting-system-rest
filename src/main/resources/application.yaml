@@ -12,4 +12,14 @@ security:
   jwt:
     secret: ___
 #    seconds
-    expiration: ___
+    expiration: 604800
+
+logging:
+  level:
+    root: info
+    web: error
+    sql: error
+  file:
+      name: src/app.log
+  pattern:
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg\n"
