@@ -34,11 +34,11 @@ public class AuthenticationServiceImpl implements AuthenticationService<UserDto,
   @Override
   public void validatePermission(Integer userId, String token) {
 
-    var user = userService.getUserDtoById(userId);
-
     var usernameFromToken = getUsername(token.substring(BEGIN_INDEX_TOKEN));
 
-    if (!usernameFromToken.equals(user.getUsername())) {
+    var user = userService.getByUsername(usernameFromToken);
+
+    if (!userId.equals(user.getId())) {
       throw new ForbiddenException(String.format(
           "You do not have rights to get or change information about the user with id: %d",
           userId
