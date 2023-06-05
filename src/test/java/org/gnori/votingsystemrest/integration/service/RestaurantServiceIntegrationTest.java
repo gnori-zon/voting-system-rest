@@ -7,8 +7,8 @@ import org.gnori.votingsystemrest.dao.impl.MenuDao;
 import org.gnori.votingsystemrest.dao.impl.RestaurantDao;
 import org.gnori.votingsystemrest.error.exceptions.impl.ConflictException;
 import org.gnori.votingsystemrest.error.exceptions.impl.NotFoundException;
-import org.gnori.votingsystemrest.factory.impl.MenuFactory;
-import org.gnori.votingsystemrest.factory.impl.RestaurantFactory;
+import org.gnori.votingsystemrest.converter.impl.MenuConverter;
+import org.gnori.votingsystemrest.converter.impl.RestaurantConverter;
 import org.gnori.votingsystemrest.model.Item;
 import org.gnori.votingsystemrest.model.dto.MenuDto;
 import org.gnori.votingsystemrest.model.dto.RestaurantDto;
@@ -33,7 +33,7 @@ class RestaurantServiceIntegrationTest {
   RestaurantServiceIntegrationTest(
       @Autowired RestaurantDao restaurantDao, @Autowired MenuDao menuDao) {
 
-    var factory = new RestaurantFactory(new MenuFactory());
+    var factory = new RestaurantConverter(new MenuConverter());
     this.service = new RestaurantService(menuDao, restaurantDao, factory);
 
   }

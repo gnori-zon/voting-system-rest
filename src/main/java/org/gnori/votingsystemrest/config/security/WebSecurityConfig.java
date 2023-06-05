@@ -29,6 +29,11 @@ public class WebSecurityConfig {
         .authorizeHttpRequests(
             requests -> requests
                 .requestMatchers("/api/v1/auth", "/api/v1/users").permitAll()
+                .requestMatchers(
+                    "/v2/api-docs", "/v3/api-docs/**", "/swagger-resources",
+                    "/swagger-resources/**", "/configuration/ui", "/configuration/security",
+                    "/swagger-ui/**", "/webjars/**", "/swagger-ui.html"
+                ).permitAll()
                 .requestMatchers("/api/v1/admin/**").hasAuthority(Role.ADMIN.name())
                 .requestMatchers("/api/v1/users/**").hasAuthority(Role.USER.name())
                 .anyRequest().authenticated()

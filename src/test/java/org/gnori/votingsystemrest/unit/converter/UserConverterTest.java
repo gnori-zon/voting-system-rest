@@ -1,11 +1,11 @@
-package org.gnori.votingsystemrest.unit.factory;
+package org.gnori.votingsystemrest.unit.converter;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import org.gnori.votingsystemrest.factory.impl.UserFactory;
+import org.gnori.votingsystemrest.converter.impl.UserConverter;
 import org.gnori.votingsystemrest.model.dto.UserDto;
 import org.gnori.votingsystemrest.model.entity.UserEntity;
 import org.gnori.votingsystemrest.model.entity.enums.Role;
@@ -14,10 +14,10 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 @DisplayName("Unit test for UserFactory")
-class UserFactoryTest extends AbstractFactoryTest<UserDto, UserEntity> {
+class UserConverterTest extends AbstractConverterTest<UserDto, UserEntity> {
 
-  UserFactoryTest() {
-    super(new UserFactory());
+  UserConverterTest() {
+    super(new UserConverter());
   }
 
   @Test

@@ -1,9 +1,9 @@
-package org.gnori.votingsystemrest.factory;
+package org.gnori.votingsystemrest.converter;
 
 import java.util.List;
 import org.gnori.votingsystemrest.model.entity.BaseEntity;
 
-public interface BaseFactory<D, E extends BaseEntity> {
+public interface BaseConverter<D, E extends BaseEntity> {
 
   D convertFrom(E entity);
 

@@ -6,7 +6,7 @@ import java.util.List;
 import org.gnori.votingsystemrest.dao.impl.RestaurantDao;
 import org.gnori.votingsystemrest.dao.impl.UserDao;
 import org.gnori.votingsystemrest.error.exceptions.impl.NotFoundException;
-import org.gnori.votingsystemrest.factory.impl.VoteFactory;
+import org.gnori.votingsystemrest.converter.impl.VoteConverter;
 import org.gnori.votingsystemrest.model.Item;
 import org.gnori.votingsystemrest.model.entity.MenuEntity;
 import org.gnori.votingsystemrest.model.entity.RestaurantEntity;
@@ -38,7 +38,7 @@ class VoteServiceIntegrationTest {
     this.userDao = userDao;
     this.restaurantDao = restaurantDao;
 
-    this.service = new VoteService(userDao, restaurantDao, new VoteFactory());
+    this.service = new VoteService(userDao, restaurantDao, new VoteConverter());
 
   }
 

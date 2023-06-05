@@ -6,7 +6,7 @@ import org.gnori.votingsystemrest.dao.impl.MenuDao;
 import org.gnori.votingsystemrest.dao.impl.RestaurantDao;
 import org.gnori.votingsystemrest.error.exceptions.impl.ConflictException;
 import org.gnori.votingsystemrest.error.exceptions.impl.NotFoundException;
-import org.gnori.votingsystemrest.factory.impl.RestaurantFactory;
+import org.gnori.votingsystemrest.converter.impl.RestaurantConverter;
 import org.gnori.votingsystemrest.model.dto.RestaurantDto;
 import org.gnori.votingsystemrest.model.entity.RestaurantEntity;
 import org.gnori.votingsystemrest.service.AbstractService;
@@ -21,16 +21,16 @@ import org.springframework.stereotype.Service;
 @CacheConfig(cacheNames = "restaurant")
 public class RestaurantService extends AbstractService<RestaurantEntity, RestaurantDao> {
 
-  private final RestaurantFactory restaurantFactory;
+  private final RestaurantConverter restaurantConverter;
   private final MenuDao menuDao;
 
   public RestaurantService(
       MenuDao menuDao,
       RestaurantDao dao,
-      RestaurantFactory restaurantFactory) {
+      RestaurantConverter restaurantConverter) {
 
     super(dao);
-    this.restaurantFactory = restaurantFactory;
+    this.restaurantConverter = restaurantConverter;
     this.menuDao = menuDao;
 
   }
@@ -43,14 +43,14 @@ public class RestaurantService extends AbstractService<RestaurantEntity, Restaur
             HttpStatus.NOT_FOUND)
     );
 
-    return restaurantFactory.convertFrom(restaurantEntity);
+    return restaurantConverter.convertFrom(restaurantEntity);
 
   }
 
 
   public List<RestaurantDto> getAllRestaurantDto() {
 
-    return restaurantFactory.convertListFrom(getAll());
+    return restaurantConverter.convertListFrom(getAll());
 
   }
 
@@ -65,7 +65,7 @@ public class RestaurantService extends AbstractService<RestaurantEntity, Restaur
 
     }
 
-    var restaurantEntity = restaurantFactory.convertFrom(restaurantDto);
+    var restaurantEntity = restaurantConverter.convertFrom(restaurantDto);
 
     if (restaurantEntity.getLaunchMenu() != null) {
       restaurantEntity.setUpdateMenuDate(LocalDate.now());
@@ -87,7 +87,7 @@ public class RestaurantService extends AbstractService<RestaurantEntity, Restaur
       Integer restaurantId,
       RestaurantDto restaurantDto) {
 
-    var newRestaurantEntity = restaurantFactory.convertFrom(restaurantDto);
+    var newRestaurantEntity = restaurantConverter.convertFrom(restaurantDto);
     var oldRestaurantEntity = get(restaurantId).orElseThrow(
         () -> new NotFoundException(
             String.format("restaurant with id: %d is not exist", restaurantId),
@@ -118,7 +118,7 @@ public class RestaurantService extends AbstractService<RestaurantEntity, Restaur
     }
 
     restaurantDto = update(restaurantId, newRestaurantEntity)
-        .map(restaurantFactory::convertFrom)
+        .map(restaurantConverter::convertFrom)
         .orElse(null);
 
     if (oldMenu != null)  menuDao.deleteById(oldMenu.getId()); // deleted if menu not bind

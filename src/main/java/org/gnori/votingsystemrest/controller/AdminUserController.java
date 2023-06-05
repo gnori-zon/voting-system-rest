@@ -1,5 +1,7 @@
 package org.gnori.votingsystemrest.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +32,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/admin/users")
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@Tag(name = "user controller for users with ADMIN role")
 public class AdminUserController {
 
   public static final String ADMIN_USERS_WITH_ID_URL = "/{userId}";
@@ -37,6 +40,7 @@ public class AdminUserController {
   UserService userService;
   AuthenticationService<UserDto, Integer, String> authenticationService;
 
+  @Operation(description = "get user for admin")
   @LogMethodExecutionTime
   @ResponseStatus(HttpStatus.OK)
   @GetMapping(value = ADMIN_USERS_WITH_ID_URL, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -46,6 +50,7 @@ public class AdminUserController {
 
   }
 
+  @Operation(description = "get all users for admin")
   @LogMethodExecutionTime
   @ResponseStatus(HttpStatus.OK)
   @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
@@ -55,6 +60,7 @@ public class AdminUserController {
 
   }
 
+  @Operation(description = "create user for admin")
   @LogMethodExecutionTime
   @ResponseStatus(HttpStatus.CREATED)
   @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE,
@@ -72,6 +78,7 @@ public class AdminUserController {
 
   }
 
+  @Operation(description = "update user data for admin")
   @LogMethodExecutionTime
   @ResponseStatus(HttpStatus.OK)
   @PatchMapping(value = ADMIN_USERS_WITH_ID_URL,
@@ -90,6 +97,7 @@ public class AdminUserController {
 
   }
 
+  @Operation(description = "delete user for admin")
   @LogMethodExecutionTime
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @DeleteMapping(ADMIN_USERS_WITH_ID_URL)

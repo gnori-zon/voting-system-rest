@@ -1,17 +1,17 @@
-package org.gnori.votingsystemrest.factory.impl;
+package org.gnori.votingsystemrest.converter.impl;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.gnori.votingsystemrest.factory.BaseFactory;
+import org.gnori.votingsystemrest.converter.BaseConverter;
 import org.gnori.votingsystemrest.model.dto.RestaurantDto;
 import org.gnori.votingsystemrest.model.entity.RestaurantEntity;
 import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class RestaurantFactory implements BaseFactory<RestaurantDto, RestaurantEntity> {
+public class RestaurantConverter implements BaseConverter<RestaurantDto, RestaurantEntity> {
 
-  private final MenuFactory menuFactory;
+  private final MenuConverter menuConverter;
 
   public RestaurantDto convertFrom(RestaurantEntity restaurantEntity) {
 
@@ -20,7 +20,7 @@ public class RestaurantFactory implements BaseFactory<RestaurantDto, RestaurantE
     return RestaurantDto.builder()
         .id(restaurantEntity.getId())
         .name(restaurantEntity.getName())
-        .launchMenu(menuFactory.convertFrom(restaurantEntity.getLaunchMenu()))
+        .launchMenu(menuConverter.convertFrom(restaurantEntity.getLaunchMenu()))
         .build();
 
   }
@@ -39,7 +39,7 @@ public class RestaurantFactory implements BaseFactory<RestaurantDto, RestaurantE
 
     return RestaurantEntity.builder()
         .name(restaurantDto.getName())
-        .launchMenu(menuFactory.convertFrom(restaurantDto.getLaunchMenu()))
+        .launchMenu(menuConverter.convertFrom(restaurantDto.getLaunchMenu()))
         .build();
 
   }

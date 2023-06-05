@@ -1,5 +1,6 @@
 package org.gnori.votingsystemrest.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
 import java.util.List;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +34,7 @@ public class MenuController {
 
   MenuService menuService;
 
+  @Operation(description = "get menu by restaurant id")
   @LogMethodExecutionTime
   @ResponseStatus(HttpStatus.OK)
   @GetMapping(value = RESTAURANT_MENU_URL, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -42,6 +44,7 @@ public class MenuController {
 
   }
 
+  @Operation(description = "get all menu")
   @LogMethodExecutionTime
   @ResponseStatus(HttpStatus.OK)
   @GetMapping(value = MENU_URL, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -51,6 +54,7 @@ public class MenuController {
 
   }
 
+  @Operation(description = "create menu for restaurant")
   @LogMethodExecutionTime
   @ResponseStatus(HttpStatus.OK)
   @PostMapping(value = RESTAURANT_MENU_URL,
@@ -63,6 +67,7 @@ public class MenuController {
 
   }
 
+  @Operation(description = "update menu for restaurant by ids")
   @LogMethodExecutionTime
   @ResponseStatus(HttpStatus.OK)
   @PutMapping(value = RESTAURANT_MENU_URL,
@@ -75,6 +80,7 @@ public class MenuController {
 
   }
 
+  @Operation(description = "delete current menu for restaurant")
   @LogMethodExecutionTime
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @DeleteMapping(RESTAURANT_MENU_URL)

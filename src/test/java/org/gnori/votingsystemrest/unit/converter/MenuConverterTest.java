@@ -1,9 +1,9 @@
-package org.gnori.votingsystemrest.unit.factory;
+package org.gnori.votingsystemrest.unit.converter;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import org.gnori.votingsystemrest.factory.impl.MenuFactory;
+import org.gnori.votingsystemrest.converter.impl.MenuConverter;
 import org.gnori.votingsystemrest.model.Item;
 import org.gnori.votingsystemrest.model.dto.MenuDto;
 import org.gnori.votingsystemrest.model.entity.MenuEntity;
@@ -12,10 +12,10 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 @DisplayName("Unit test for MenuFactory")
-class MenuFactoryTest extends AbstractFactoryTest<MenuDto, MenuEntity> {
+class MenuConverterTest extends AbstractConverterTest<MenuDto, MenuEntity> {
 
-  public MenuFactoryTest() {
-    super(new MenuFactory());
+  public MenuConverterTest() {
+    super(new MenuConverter());
   }
 
   @Test

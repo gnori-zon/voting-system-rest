@@ -7,7 +7,7 @@ import org.gnori.votingsystemrest.dao.impl.RestaurantDao;
 import org.gnori.votingsystemrest.dao.impl.UserDao;
 import org.gnori.votingsystemrest.error.exceptions.impl.BadRequestException;
 import org.gnori.votingsystemrest.error.exceptions.impl.NotFoundException;
-import org.gnori.votingsystemrest.factory.impl.VoteFactory;
+import org.gnori.votingsystemrest.converter.impl.VoteConverter;
 import org.gnori.votingsystemrest.model.dto.VoteDto;
 import org.gnori.votingsystemrest.model.entity.UserEntity;
 import org.springframework.cache.annotation.CacheConfig;
@@ -23,16 +23,16 @@ public class VoteService {
 
   private final UserDao userDao;
   private final RestaurantDao restaurantDao;
-  private final VoteFactory voteFactory;
+  private final VoteConverter voteConverter;
 
   public VoteService(
       UserDao userDao,
       RestaurantDao restaurantDao,
-      VoteFactory voteFactory) {
+      VoteConverter voteConverter) {
 
     this.userDao = userDao;
     this.restaurantDao = restaurantDao;
-    this.voteFactory = voteFactory;
+    this.voteConverter = voteConverter;
 
   }
   @Cacheable
@@ -105,7 +105,7 @@ public class VoteService {
     );
     var numberOfVotes = userDao.countByVotedForAndDateVoteEquals(restaurantId, LocalDate.now());
 
-    return voteFactory.convertFrom(restaurantEntity, numberOfVotes);
+    return voteConverter.convertFrom(restaurantEntity, numberOfVotes);
 
   }
 

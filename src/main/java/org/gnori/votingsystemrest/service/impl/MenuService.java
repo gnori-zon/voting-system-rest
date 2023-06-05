@@ -6,7 +6,7 @@ import org.gnori.votingsystemrest.dao.impl.MenuDao;
 import org.gnori.votingsystemrest.dao.impl.RestaurantDao;
 import org.gnori.votingsystemrest.error.exceptions.impl.ConflictException;
 import org.gnori.votingsystemrest.error.exceptions.impl.NotFoundException;
-import org.gnori.votingsystemrest.factory.impl.MenuFactory;
+import org.gnori.votingsystemrest.converter.impl.MenuConverter;
 import org.gnori.votingsystemrest.model.dto.MenuDto;
 import org.gnori.votingsystemrest.model.entity.MenuEntity;
 import org.gnori.votingsystemrest.service.AbstractService;
@@ -22,12 +22,12 @@ import org.springframework.stereotype.Service;
 public class MenuService extends AbstractService<MenuEntity, MenuDao> {
 
   private final RestaurantDao restaurantDao;
-  private final MenuFactory menuFactory;
+  private final MenuConverter menuConverter;
 
-  public MenuService(MenuDao dao, RestaurantDao restaurantDao, MenuFactory menuFactory) {
+  public MenuService(MenuDao dao, RestaurantDao restaurantDao, MenuConverter menuConverter) {
     super(dao);
     this.restaurantDao = restaurantDao;
-    this.menuFactory = menuFactory;
+    this.menuConverter = menuConverter;
   }
 
   @Cacheable
@@ -49,13 +49,13 @@ public class MenuService extends AbstractService<MenuEntity, MenuDao> {
 
     }
 
-    return menuFactory.convertFrom(menuEntity);
+    return menuConverter.convertFrom(menuEntity);
 
   }
 
   public List<MenuDto> getAllMenuDto() {
 
-    return menuFactory.convertListFrom(getAll());
+    return menuConverter.convertListFrom(getAll());
 
   }
 
@@ -73,7 +73,7 @@ public class MenuService extends AbstractService<MenuEntity, MenuDao> {
 
           }
 
-          var menuEntity = create(menuFactory.convertFrom(menuDto));
+          var menuEntity = create(menuConverter.convertFrom(menuDto));
 
           restaurantEntity.setLaunchMenu(menuEntity);
           restaurantEntity.setUpdateMenuDate(LocalDate.now());
@@ -98,7 +98,7 @@ public class MenuService extends AbstractService<MenuEntity, MenuDao> {
     return restaurantDao.findById(restaurantId).map(
         restaurantEntity -> {
 
-          var menuEntity = menuFactory.convertFrom(menuDto);
+          var menuEntity = menuConverter.convertFrom(menuDto);
           restaurantEntity.setUpdateMenuDate(LocalDate.now());
 
           if (restaurantDao.isExistsMenu(restaurantId)) {

@@ -57,7 +57,7 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
 
     var errorDto = ErrorDto.builder()
         .error(ex.getBody().getDetail())
-        .error(message)
+        .errorDescription(message)
         .build();
 
     if (!fieldErrors.isEmpty()) {

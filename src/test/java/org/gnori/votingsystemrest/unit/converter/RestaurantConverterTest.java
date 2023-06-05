@@ -1,11 +1,11 @@
-package org.gnori.votingsystemrest.unit.factory;
+package org.gnori.votingsystemrest.unit.converter;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import org.gnori.votingsystemrest.factory.impl.MenuFactory;
-import org.gnori.votingsystemrest.factory.impl.RestaurantFactory;
+import org.gnori.votingsystemrest.converter.impl.MenuConverter;
+import org.gnori.votingsystemrest.converter.impl.RestaurantConverter;
 import org.gnori.votingsystemrest.model.Item;
 import org.gnori.votingsystemrest.model.dto.MenuDto;
 import org.gnori.votingsystemrest.model.dto.RestaurantDto;
@@ -16,10 +16,10 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 @DisplayName("Unit test for RestaurantFactory")
-class RestaurantFactoryTest extends AbstractFactoryTest<RestaurantDto, RestaurantEntity> {
+class RestaurantConverterTest extends AbstractConverterTest<RestaurantDto, RestaurantEntity> {
 
-  RestaurantFactoryTest() {
-    super(new RestaurantFactory(new MenuFactory()));
+  RestaurantConverterTest() {
+    super(new RestaurantConverter(new MenuConverter()));
   }
 
   @Test

@@ -6,8 +6,8 @@ import java.util.Set;
 import org.gnori.votingsystemrest.dao.impl.UserDao;
 import org.gnori.votingsystemrest.error.exceptions.impl.ConflictException;
 import org.gnori.votingsystemrest.error.exceptions.impl.NotFoundException;
-import org.gnori.votingsystemrest.factory.impl.UserFactory;
-import org.gnori.votingsystemrest.factory.impl.UserForAdminFactory;
+import org.gnori.votingsystemrest.converter.impl.UserConverter;
+import org.gnori.votingsystemrest.converter.impl.UserForAdminConverter;
 import org.gnori.votingsystemrest.model.dto.UserDto;
 import org.gnori.votingsystemrest.model.dto.UserForAdminDto;
 import org.gnori.votingsystemrest.model.entity.UserEntity;
@@ -33,7 +33,7 @@ class UserServiceIntegrationTest {
 
   public UserServiceIntegrationTest(@Autowired UserDao userDao) {
     this.service = new UserService(
-        userDao, new UserForAdminFactory(), new BCryptPasswordEncoder(),  new UserFactory()
+        userDao, new UserForAdminConverter(), new BCryptPasswordEncoder(),  new UserConverter()
     );
   }
 

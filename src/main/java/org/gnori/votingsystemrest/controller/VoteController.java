@@ -1,5 +1,6 @@
 package org.gnori.votingsystemrest.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
 import java.util.List;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +33,7 @@ public class VoteController {
 
   VoteService voteService;
 
+  @Operation(description = "get vote by user id")
   @LogMethodExecutionTime
   @ResponseStatus(HttpStatus.OK)
   @GetMapping(value = USER_VOTE_URL, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -41,6 +43,7 @@ public class VoteController {
 
   }
 
+  @Operation(description = "get all votes")
   @LogMethodExecutionTime
   @ResponseStatus(HttpStatus.OK)
   @GetMapping(value = VOTES_URL, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -50,6 +53,7 @@ public class VoteController {
 
   }
 
+  @Operation(description = "vote by user and restaurant ids")
   @LogMethodExecutionTime
   @ResponseStatus(HttpStatus.CREATED)
   @PostMapping(value = USER_VOTE_URL, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -59,6 +63,7 @@ public class VoteController {
 
   }
 
+  @Operation(description = "change vote by user and restaurant ids")
   @LogMethodExecutionTime
   @ResponseStatus(HttpStatus.OK)
   @PutMapping(value = USER_VOTE_URL, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -68,6 +73,7 @@ public class VoteController {
 
   }
 
+  @Operation(description = "delete vote by user id")
   @LogMethodExecutionTime
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @DeleteMapping(USER_VOTE_URL)

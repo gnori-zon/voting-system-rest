@@ -1,15 +1,15 @@
-package org.gnori.votingsystemrest.unit.factory;
+package org.gnori.votingsystemrest.unit.converter;
 
 import java.util.List;
-import org.gnori.votingsystemrest.factory.BaseFactory;
+import org.gnori.votingsystemrest.converter.BaseConverter;
 import org.gnori.votingsystemrest.model.entity.BaseEntity;
 import org.junit.jupiter.api.Assertions;
 
-abstract class AbstractFactoryTest<D, E extends BaseEntity> {
+abstract class AbstractConverterTest<D, E extends BaseEntity> {
 
-  protected final BaseFactory<D, E> factory;
+  protected final BaseConverter<D, E> factory;
 
-  AbstractFactoryTest(BaseFactory<D, E> factory ) {
+  AbstractConverterTest(BaseConverter<D, E> factory ) {
     this.factory = factory;
   }
 

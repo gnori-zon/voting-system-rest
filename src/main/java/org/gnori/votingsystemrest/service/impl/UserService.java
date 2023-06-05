@@ -6,8 +6,8 @@ import java.util.Set;
 import org.gnori.votingsystemrest.dao.impl.UserDao;
 import org.gnori.votingsystemrest.error.exceptions.impl.ConflictException;
 import org.gnori.votingsystemrest.error.exceptions.impl.NotFoundException;
-import org.gnori.votingsystemrest.factory.impl.UserFactory;
-import org.gnori.votingsystemrest.factory.impl.UserForAdminFactory;
+import org.gnori.votingsystemrest.converter.impl.UserConverter;
+import org.gnori.votingsystemrest.converter.impl.UserForAdminConverter;
 import org.gnori.votingsystemrest.model.dto.UserDto;
 import org.gnori.votingsystemrest.model.dto.UserForAdminDto;
 import org.gnori.votingsystemrest.model.entity.UserEntity;
@@ -23,18 +23,18 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserService extends AbstractService<UserEntity, UserDao> {
 
-  private final UserForAdminFactory userForAdminFactory;
-  private final UserFactory userFactory;
+  private final UserForAdminConverter userForAdminConverter;
+  private final UserConverter userConverter;
   private final PasswordEncoder passwordEncoder;
 
   public UserService(UserDao dao,
-      UserForAdminFactory userForAdminFactory,
+      UserForAdminConverter userForAdminConverter,
       PasswordEncoder passwordEncoder,
-      UserFactory userFactory) {
+      UserConverter userConverter) {
     super(dao);
-    this.userFactory = userFactory;
+    this.userConverter = userConverter;
     this.passwordEncoder = passwordEncoder;
-    this.userForAdminFactory = userForAdminFactory;
+    this.userForAdminConverter = userForAdminConverter;
   }
 
   @Cacheable(cacheNames = "admin-user")
@@ -42,7 +42,7 @@ public class UserService extends AbstractService<UserEntity, UserDao> {
 
     var userEntity = getAndValidateById(userId);
 
-    return userForAdminFactory.convertFrom(userEntity);
+    return userForAdminConverter.convertFrom(userEntity);
 
   }
 
@@ -51,19 +51,19 @@ public class UserService extends AbstractService<UserEntity, UserDao> {
 
     var userEntity = getAndValidateById(userId);
 
-    return userFactory.convertFrom(userEntity);
+    return userConverter.convertFrom(userEntity);
 
   }
 
   public List<UserForAdminDto> getAllUserForAdminDto() {
 
-    return userForAdminFactory.convertListFrom(getAll());
+    return userForAdminConverter.convertListFrom(getAll());
 
   }
 
   public List<UserDto> getAllUserDto() {
 
-    return userFactory.convertListFrom(getAll());
+    return userConverter.convertListFrom(getAll());
 
   }
 
@@ -71,11 +71,11 @@ public class UserService extends AbstractService<UserEntity, UserDao> {
 
     checkForExistUsername(userForAdminDto.getUsername());
 
-    var userEntity = userForAdminFactory.convertFrom(userForAdminDto);
+    var userEntity = userForAdminConverter.convertFrom(userForAdminDto);
 
     userEntity.setPassword(passwordEncoder.encode(userForAdminDto.getPassword()));
 
-    return userForAdminFactory.convertFrom(create(userEntity));
+    return userForAdminConverter.convertFrom(create(userEntity));
 
   }
 
@@ -83,13 +83,13 @@ public class UserService extends AbstractService<UserEntity, UserDao> {
 
     checkForExistUsername(userDto.getUsername());
 
-    var userEntity = userFactory.convertFrom(userDto);
+    var userEntity = userConverter.convertFrom(userDto);
 
     userEntity.setPassword(passwordEncoder.encode(userEntity.getPassword()));
 
     userEntity.setRoles(new HashSet<>(Set.of(Role.USER)));
 
-    return userFactory.convertFrom(create(userEntity));
+    return userConverter.convertFrom(create(userEntity));
 
   }
 
@@ -117,7 +117,7 @@ public class UserService extends AbstractService<UserEntity, UserDao> {
       userEntity.setRoles(userForAdminDto.getRoles());
     }
 
-    return userForAdminFactory.convertFrom(
+    return userForAdminConverter.convertFrom(
         update(userId, userEntity).orElse(null)
     );
 
@@ -139,7 +139,7 @@ public class UserService extends AbstractService<UserEntity, UserDao> {
       userEntity.setPassword(passwordEncoder.encode(newUserData.getPassword()));
     }
 
-    return userFactory.convertFrom(
+    return userConverter.convertFrom(
         update(userId, userEntity).orElse(null)
     );
 

@@ -1,5 +1,7 @@
 package org.gnori.votingsystemrest.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -30,6 +32,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1")
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@Tag(name = "user controller for users")
 public class UserController {
 
   public static final String USER_URL = "/users";
@@ -41,6 +44,7 @@ public class UserController {
   UserService userService;
   AuthenticationService<UserDto, Integer, String> authenticationService;
 
+  @Operation(description = "get user for user")
   @LogMethodExecutionTime
   @ResponseStatus(HttpStatus.OK)
   @GetMapping(value = USER_WITH_ID_URL, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -52,6 +56,7 @@ public class UserController {
 
   }
 
+  @Operation(description = "register new user")
   @LogMethodExecutionTime
   @ResponseStatus(HttpStatus.CREATED)
   @PostMapping(value = USER_URL,
@@ -68,6 +73,7 @@ public class UserController {
 
   }
 
+  @Operation(description = "update user date for user")
   @LogMethodExecutionTime
   @ResponseStatus(HttpStatus.OK)
   @PutMapping(value = AUTH_URL,
@@ -85,6 +91,7 @@ public class UserController {
 
   }
 
+  @Operation(description = "update user data for user")
   @LogMethodExecutionTime
   @ResponseStatus(HttpStatus.OK)
   @PatchMapping(value = USER_WITH_ID_URL,
@@ -106,6 +113,7 @@ public class UserController {
 
   }
 
+  @Operation(description = "delete user")
   @LogMethodExecutionTime
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @DeleteMapping(USER_WITH_ID_URL)

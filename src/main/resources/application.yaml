@@ -21,5 +21,6 @@ logging:
     sql: error
   file:
       name: src/app.log
+      max-history: 1
   pattern:
-    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg\n"
+    file: '%d{HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n'

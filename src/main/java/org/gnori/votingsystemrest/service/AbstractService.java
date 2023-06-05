@@ -4,13 +4,11 @@ import java.util.List;
 import java.util.Optional;
 import org.gnori.votingsystemrest.dao.BaseDao;
 import org.gnori.votingsystemrest.model.entity.BaseEntity;
-import org.springframework.beans.factory.annotation.Autowired;
 
 public abstract class AbstractService<E extends BaseEntity, D extends BaseDao<E>> implements BaseService<E>{
 
   protected final D dao;
 
-  @Autowired
   protected AbstractService(D dao) {
     this.dao = dao;
   }
