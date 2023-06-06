@@ -23,10 +23,10 @@ import org.hibernate.type.SqlTypes;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class MenuEntity extends BaseEntity{
 
-  @Column(length = 128)
+  @Column(nullable = false, length = 128)
   private String name;
 
   @JdbcTypeCode(SqlTypes.JSON)
-  @Column(name = "item_list")
+  @Column(nullable = false, name = "item_list")
   private List<Item> itemList;
 }

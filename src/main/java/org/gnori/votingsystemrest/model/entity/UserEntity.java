@@ -38,7 +38,7 @@ public class UserEntity extends BaseEntity implements UserDetails  {
   @Column(unique = true, length = 128, nullable = false)
   private String username;
 
-  @Column(length = 128, nullable = false)
+  @Column(nullable = false)
   private String password;
 
   @Enumerated(EnumType.STRING)

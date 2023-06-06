@@ -1,12 +1,14 @@
 spring:
+  liquibase:
+    enabled: true
   datasource:
     url: ___
     username: ___
     password: ___
     driver-class-name: ___
   jpa:
-    show-sql: ___
-    hibernate.ddl-auto: ___
+    show-sql: true
+    hibernate.ddl-auto: none
 
 security:
   jwt:

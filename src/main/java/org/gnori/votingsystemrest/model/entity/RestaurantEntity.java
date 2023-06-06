@@ -22,7 +22,7 @@ import lombok.Setter;
 @Table(name = "restaurant")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class RestaurantEntity extends BaseEntity {
-  @Column(unique = true, length = 128)
+  @Column(nullable = false, unique = true, length = 128)
   private String name;
 
   @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
