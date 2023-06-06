@@ -1,6 +1,7 @@
 package org.gnori.votingsystemrest.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import lombok.AccessLevel;
@@ -33,6 +34,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/admin/users")
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Tag(name = "user controller for users with ADMIN role")
+@SecurityRequirement(name = "bearerAuth")
 public class AdminUserController {
 
   public static final String ADMIN_USERS_WITH_ID_URL = "/{userId}";

@@ -27,8 +27,7 @@ import io.swagger.v3.oas.annotations.servers.Server;
     servers = @Server(
         url = "http://localhost:8080",
         description = "Local ENV"
-    ),
-    security = @SecurityRequirement(name = "bearerAuth")
+    )
 )
 @SecurityScheme(
     name = "bearerAuth",

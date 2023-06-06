@@ -1,6 +1,7 @@
 package org.gnori.votingsystemrest.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import java.util.List;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RequestMapping(value = "/api/v1/admin")
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
+@SecurityRequirement(name = "bearerAuth")
 public class MenuController {
 
   public static final String RESTAURANT_MENU_URL = "/restaurants/{restaurantId}/menu";

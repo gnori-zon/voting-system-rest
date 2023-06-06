@@ -1,6 +1,7 @@
 package org.gnori.votingsystemrest.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -45,6 +46,7 @@ public class UserController {
   AuthenticationService<UserDto, Integer, String> authenticationService;
 
   @Operation(description = "get user for user")
+  @SecurityRequirement(name = "bearerAuth")
   @LogMethodExecutionTime
   @ResponseStatus(HttpStatus.OK)
   @GetMapping(value = USER_WITH_ID_URL, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -73,7 +75,7 @@ public class UserController {
 
   }
 
-  @Operation(description = "update user date for user")
+  @Operation(description = "auth user and update token")
   @LogMethodExecutionTime
   @ResponseStatus(HttpStatus.OK)
   @PutMapping(value = AUTH_URL,
@@ -92,6 +94,7 @@ public class UserController {
   }
 
   @Operation(description = "update user data for user")
+  @SecurityRequirement(name = "bearerAuth")
   @LogMethodExecutionTime
   @ResponseStatus(HttpStatus.OK)
   @PatchMapping(value = USER_WITH_ID_URL,
@@ -114,6 +117,7 @@ public class UserController {
   }
 
   @Operation(description = "delete user")
+  @SecurityRequirement(name = "bearerAuth")
   @LogMethodExecutionTime
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @DeleteMapping(USER_WITH_ID_URL)
