@@ -19,7 +19,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -37,7 +36,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
 
   public static final String USER_URL = "/users";
-  public static final String USER_WITH_ID_URL = USER_URL + "/{userId}";
   public static final String AUTH_URL = "/auth";
 
   private static final String AUTH_HEADER = "Authorization";
@@ -49,10 +47,10 @@ public class UserController {
   @SecurityRequirement(name = "bearerAuth")
   @LogMethodExecutionTime
   @ResponseStatus(HttpStatus.OK)
-  @GetMapping(value = USER_WITH_ID_URL, produces = MediaType.APPLICATION_JSON_VALUE)
-  public UserDto get(@PathVariable Integer userId, @RequestHeader(AUTH_HEADER) String token){
+  @GetMapping(value = USER_URL, produces = MediaType.APPLICATION_JSON_VALUE)
+  public UserDto get(@RequestHeader(AUTH_HEADER) String token){
 
-    authenticationService.validatePermission(userId, token);
+    var userId = authenticationService.getUserIdFrom(token);
 
     return userService.getUserDtoById(userId);
 
@@ -63,7 +61,8 @@ public class UserController {
   @ResponseStatus(HttpStatus.CREATED)
   @PostMapping(value = USER_URL,
       consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-  public UserDto register(@Validated(ValidationOfUser.class) @RequestBody UserDto userDto) {
+  public UserDto register(
+      @Validated(ValidationOfUser.class) @RequestBody UserDto userDto) {
 
     var responseUserDto = userService.createFromUserDto(userDto);
 
@@ -97,14 +96,13 @@ public class UserController {
   @SecurityRequirement(name = "bearerAuth")
   @LogMethodExecutionTime
   @ResponseStatus(HttpStatus.OK)
-  @PatchMapping(value = USER_WITH_ID_URL,
+  @PatchMapping(value = USER_URL,
       consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
   public UserDto update(
-      @PathVariable Integer userId,
       @RequestHeader(AUTH_HEADER) String token,
       @Validated(AdvancedValidation.class) @RequestBody UserDto userDto){
 
-    authenticationService.validatePermission(userId, token);
+    var userId = authenticationService.getUserIdFrom(token);
 
     var responseUserDto = userService.updateByIdFromUserDto(userId, userDto);
 
@@ -120,10 +118,10 @@ public class UserController {
   @SecurityRequirement(name = "bearerAuth")
   @LogMethodExecutionTime
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  @DeleteMapping(USER_WITH_ID_URL)
-  public void delete(@PathVariable Integer userId, @RequestHeader(AUTH_HEADER) String token){
+  @DeleteMapping(USER_URL)
+  public void delete(@RequestHeader(AUTH_HEADER) String token){
 
-    authenticationService.validatePermission(userId, token);
+    var userId = authenticationService.getUserIdFrom(token);
 
     userService.delete(userId);
 

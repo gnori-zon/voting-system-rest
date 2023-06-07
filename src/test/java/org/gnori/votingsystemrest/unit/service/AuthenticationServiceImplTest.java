@@ -1,6 +1,5 @@
 package org.gnori.votingsystemrest.unit.service;
 
-import org.gnori.votingsystemrest.error.exceptions.impl.ForbiddenException;
 import org.gnori.votingsystemrest.model.dto.UserDto;
 import org.gnori.votingsystemrest.model.entity.UserEntity;
 import org.gnori.votingsystemrest.service.impl.UserService;
@@ -16,6 +15,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 @DisplayName("Unit test for AuthenticationServiceImplTest")
 class AuthenticationServiceImplTest {
 
+  private static final Integer BEGIN_INDEX_TOKEN = 7;
   UserService userServiceMock = Mockito.mock(UserService.class);
   JwtService jwtServiceMock = Mockito.mock(JwtService.class);
   AuthenticationManager authManagerMock = Mockito.mock(AuthenticationManager.class);
@@ -39,43 +39,26 @@ class AuthenticationServiceImplTest {
   }
 
   @Test
-  void validatePermissionSuccess() {
+  void getUserIdFromSuccess() {
 
-    var id = 1;
-    var token = "*******TOKEN";
-    var indexBeginToken = 7;
+    var userId = 1;
+    var token = "-------token";
     var username = "user";
-    var userDto = UserDto.builder().username(username).build();
+    var user = UserEntity.builder().build();
+    user.setId(userId);
 
-    Mockito.when(userServiceMock.getUserDtoById(id)).thenReturn(userDto);
-    Mockito.when(jwtServiceMock.extractUsername(token.substring(indexBeginToken)))
+    Mockito.when(jwtServiceMock.extractUsername(token.substring(BEGIN_INDEX_TOKEN)))
         .thenReturn(username);
+    Mockito.when(userServiceMock.getByUsername(username))
+        .thenReturn(user);
 
-    service.validatePermission(id, token);
+    var actual = service.getUserIdFrom(token);
 
+    Assertions.assertEquals(userId, actual);
   }
 
-  @Test
-  void validatePermissionShouldThrowForbiddenException() {
 
-    var id = 1;
-    var token = "*******TOKEN";
-    var indexBeginToken = 7;
-    var username = "user";
-    var userDto = UserDto.builder().username(username).build();
-
-    Mockito.when(userServiceMock.getUserDtoById(id)).thenReturn(userDto);
-    Mockito.when(jwtServiceMock.extractUsername(token.substring(indexBeginToken)))
-        .thenReturn("otherUsername");
-
-    Assertions.assertThrows(
-        ForbiddenException.class,
-        () -> service.validatePermission(id, token)
-    );
-
-  }
-
-  @Test
+    @Test
   void generateNewToken() {
 
     var username = "user";

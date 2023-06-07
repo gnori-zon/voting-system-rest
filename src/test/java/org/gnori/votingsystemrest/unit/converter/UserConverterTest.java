@@ -17,7 +17,7 @@ import org.junit.jupiter.api.Test;
 class UserConverterTest extends AbstractConverterTest<UserDto, UserEntity> {
 
   UserConverterTest() {
-    super(new UserConverter());
+    super(new UserConverter(), new UserConverter());
   }
 
   @Test
@@ -105,7 +105,7 @@ class UserConverterTest extends AbstractConverterTest<UserDto, UserEntity> {
   @Override
   void convertFromDtoTest(UserDto raw, UserEntity expectedResult) {
 
-    var actual = factory.convertFrom(raw);
+    var actual = converter.convertFrom(raw);
 
     Assertions.assertEquals(expectedResult.getUsername(), actual.getUsername());
     Assertions.assertEquals(expectedResult.getPassword(), actual.getPassword());

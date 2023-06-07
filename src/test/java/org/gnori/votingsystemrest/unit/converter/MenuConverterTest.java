@@ -15,7 +15,7 @@ import org.junit.jupiter.api.Test;
 class MenuConverterTest extends AbstractConverterTest<MenuDto, MenuEntity> {
 
   public MenuConverterTest() {
-    super(new MenuConverter());
+    super(new MenuConverter(), new MenuConverter());
   }
 
   @Test
@@ -104,7 +104,7 @@ class MenuConverterTest extends AbstractConverterTest<MenuDto, MenuEntity> {
   @Override
   void convertFromDtoTest(MenuDto raw, MenuEntity expectedResult) {
 
-    var actual = factory.convertFrom(raw);
+    var actual = converter.convertFrom(raw);
 
     Assertions.assertEquals(expectedResult.getItemList(), actual.getItemList());
     Assertions.assertEquals(expectedResult.getName(), actual.getName());

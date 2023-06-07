@@ -2,12 +2,14 @@ package org.gnori.votingsystemrest.converter.impl;
 
 import java.util.List;
 import org.gnori.votingsystemrest.converter.BaseConverter;
+import org.gnori.votingsystemrest.converter.ListConverter;
 import org.gnori.votingsystemrest.model.dto.UserForAdminDto;
 import org.gnori.votingsystemrest.model.entity.UserEntity;
 import org.springframework.stereotype.Component;
 
 @Component
-public class UserForAdminConverter implements BaseConverter<UserForAdminDto, UserEntity> {
+public class UserForAdminConverter implements BaseConverter<UserForAdminDto, UserEntity>,
+    ListConverter<UserForAdminDto, UserEntity> {
 
   public UserForAdminDto convertFrom(UserEntity userEntity) {
 

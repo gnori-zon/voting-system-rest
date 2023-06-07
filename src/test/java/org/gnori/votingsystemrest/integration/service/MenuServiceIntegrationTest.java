@@ -250,4 +250,16 @@ class MenuServiceIntegrationTest {
 
   }
 
+  @Test
+  void deleteByRestaurantIdShouldThrowNotFoundException() {
+
+    restaurantId = 1_000;
+
+    Assertions.assertThrows(
+        NotFoundException.class,
+        () -> service.deleteByRestaurantId(restaurantId)
+    );
+
+  }
+
 }

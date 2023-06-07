@@ -1,7 +1,6 @@
 package org.gnori.votingsystemrest.service.security.impl;
 
 import lombok.RequiredArgsConstructor;
-import org.gnori.votingsystemrest.error.exceptions.impl.ForbiddenException;
 import org.gnori.votingsystemrest.model.dto.UserDto;
 import org.gnori.votingsystemrest.service.impl.UserService;
 import org.gnori.votingsystemrest.service.security.AuthenticationService;
@@ -32,18 +31,12 @@ public class AuthenticationServiceImpl implements AuthenticationService<UserDto,
   }
 
   @Override
-  public void validatePermission(Integer userId, String token) {
+  public Integer getUserIdFrom(String token) {
 
     var usernameFromToken = getUsername(token.substring(BEGIN_INDEX_TOKEN));
-
     var user = userService.getByUsername(usernameFromToken);
 
-    if (!userId.equals(user.getId())) {
-      throw new ForbiddenException(String.format(
-          "You do not have rights to get or change information about the user with id: %d",
-          userId
-      ));
-    }
+    return user.getId();
 
   }
 

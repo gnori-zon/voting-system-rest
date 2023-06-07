@@ -19,7 +19,7 @@ import org.junit.jupiter.api.Test;
 class RestaurantConverterTest extends AbstractConverterTest<RestaurantDto, RestaurantEntity> {
 
   RestaurantConverterTest() {
-    super(new RestaurantConverter(new MenuConverter()));
+    super(new RestaurantConverter(new MenuConverter()), new RestaurantConverter(new MenuConverter()));
   }
 
   @Test
@@ -142,7 +142,7 @@ class RestaurantConverterTest extends AbstractConverterTest<RestaurantDto, Resta
   @Override
   void convertFromDtoTest(RestaurantDto raw, RestaurantEntity expectedResult) {
 
-    var actual = factory.convertFrom(raw);
+    var actual = converter.convertFrom(raw);
 
     Assertions.assertEquals(expectedResult.getName(), actual.getName());
     Assertions.assertEquals(expectedResult.getLaunchMenu().getName(), actual.getLaunchMenu().getName());

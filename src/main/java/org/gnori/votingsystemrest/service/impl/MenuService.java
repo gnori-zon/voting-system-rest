@@ -9,6 +9,7 @@ import org.gnori.votingsystemrest.error.exceptions.impl.NotFoundException;
 import org.gnori.votingsystemrest.converter.impl.MenuConverter;
 import org.gnori.votingsystemrest.model.dto.MenuDto;
 import org.gnori.votingsystemrest.model.entity.MenuEntity;
+import org.gnori.votingsystemrest.model.entity.RestaurantEntity;
 import org.gnori.votingsystemrest.service.AbstractService;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
@@ -33,21 +34,7 @@ public class MenuService extends AbstractService<MenuEntity, MenuDao> {
   @Cacheable
   public MenuDto getMenuDtoByRestaurantId(Integer restaurantId) {
 
-    var menuEntity = restaurantDao.findById(restaurantId)
-        .orElseThrow(
-            () -> new NotFoundException(
-                String.format("restaurant with id: %d is not exist", restaurantId),
-                HttpStatus.NOT_FOUND)
-        ) // if restaurant is not exists
-        .getLaunchMenu();
-
-    if (menuEntity == null) {
-
-      throw  new NotFoundException(
-          String.format("menu from restaurant with id: %d is not exist", restaurantId),
-          HttpStatus.NOT_FOUND);
-
-    }
+    var menuEntity = getAndValidateByRestaurantId(restaurantId);
 
     return menuConverter.convertFrom(menuEntity);
 
@@ -62,82 +49,88 @@ public class MenuService extends AbstractService<MenuEntity, MenuDao> {
   @CachePut(key = "#restaurantId")
   public MenuDto createByRestaurantIdFromMenuDto(Integer restaurantId, MenuDto menuDto) {
 
-    return restaurantDao.findById(restaurantId).map(
-        restaurantEntity -> {
+    var restaurantEntity = getAndValidateRestaurantById(restaurantId);
 
-          if (restaurantDao.isExistsMenu(restaurantId)) {
+    if (restaurantDao.isExistsMenu(restaurantId)) {
 
-            throw new ConflictException(
-                String.format("menu from restaurant with id: %d is already exist", restaurantId),
-                HttpStatus.CONFLICT);
+      throw new ConflictException(
+          String.format("menu from restaurant with id: %d is already exist", restaurantId),
+          HttpStatus.CONFLICT);
+    }
 
-          }
+    var menuEntity = create(menuConverter.convertFrom(menuDto));
 
-          var menuEntity = create(menuConverter.convertFrom(menuDto));
+    restaurantEntity.setLaunchMenu(menuEntity);
+    restaurantEntity.setUpdateMenuDate(LocalDate.now());
 
-          restaurantEntity.setLaunchMenu(menuEntity);
-          restaurantEntity.setUpdateMenuDate(LocalDate.now());
+    restaurantDao.save(restaurantEntity);
 
-          restaurantDao.save(restaurantEntity);
-
-          menuDto.setId(menuEntity.getId());
-          return menuDto;
-
-        }
-    ).orElseThrow(
-        () -> new NotFoundException(
-            String.format("restaurant with id: %d is not exist", restaurantId),
-            HttpStatus.NOT_FOUND)
-    ); // if restaurant is not exists
+    menuDto.setId(menuEntity.getId());
+    return menuDto;
 
   }
 
   @CachePut(key = "#restaurantId")
   public MenuDto updateByRestaurantIdFromMenuDto(Integer restaurantId, MenuDto menuDto) {
 
-    return restaurantDao.findById(restaurantId).map(
-        restaurantEntity -> {
+    var restaurantEntity = getAndValidateRestaurantById(restaurantId);
 
-          var menuEntity = menuConverter.convertFrom(menuDto);
-          restaurantEntity.setUpdateMenuDate(LocalDate.now());
+    var menuEntity = menuConverter.convertFrom(menuDto);
 
-          if (restaurantDao.isExistsMenu(restaurantId)) {
-            update(restaurantEntity.getLaunchMenu().getId(), menuEntity);
-          } else {
-            restaurantEntity.setLaunchMenu(menuEntity);
-            restaurantDao.save(restaurantEntity);
-          }
+    if (restaurantDao.isExistsMenu(restaurantId)) {
+      update(restaurantEntity.getLaunchMenu().getId(), menuEntity);
+    } else {
+      restaurantEntity.setLaunchMenu(menuEntity);
+      restaurantDao.save(restaurantEntity);
+    }
+    restaurantEntity.setUpdateMenuDate(LocalDate.now());
 
-          menuDto.setId(restaurantEntity.getLaunchMenu().getId());
-
-          return menuDto;
-        }
-    ).orElseThrow(
-        () -> new NotFoundException(
-            String.format("restaurant with id: %d is not exist", restaurantId),
-            HttpStatus.NOT_FOUND)
-    ); // if restaurant is not exists
+    menuDto.setId(restaurantEntity.getLaunchMenu().getId());
+    return menuDto;
 
   }
 
   @CacheEvict
   public void deleteByRestaurantId(Integer restaurantId) {
 
-    restaurantDao.findById(restaurantId).ifPresent(
-        restaurantEntity -> {
+    var restaurant = getAndValidateRestaurantById(restaurantId);
 
-          var menuEntity = restaurantEntity.getLaunchMenu();
+    var menuEntity = restaurant.getLaunchMenu();
 
-          restaurantEntity.setUpdateMenuDate(null);
-          restaurantEntity.setLaunchMenu(null);
-          restaurantDao.save(restaurantEntity);
+    restaurant.setUpdateMenuDate(null);
+    restaurant.setLaunchMenu(null);
+    restaurantDao.save(restaurant);
 
-          if (menuEntity != null) {
-            delete(menuEntity.getId());
-          }
+    if (menuEntity != null) {
+      delete(menuEntity.getId());
+    }
 
-        }
-    );
+  }
+
+  private MenuEntity getAndValidateByRestaurantId(Integer restaurantId) {
+
+    var restaurant = getAndValidateRestaurantById(restaurantId);
+
+    if (restaurant.getLaunchMenu() == null) {
+
+      throw  new NotFoundException(
+          String.format("menu from restaurant with id: %d is not exist", restaurantId),
+          HttpStatus.NOT_FOUND);
+
+    }
+
+    return restaurant.getLaunchMenu();
+
+  }
+
+  private RestaurantEntity getAndValidateRestaurantById(Integer restaurantId) {
+
+    return restaurantDao.findById(restaurantId)
+        .orElseThrow(
+            () -> new NotFoundException(
+                String.format("restaurant with id: %d is not exist", restaurantId),
+                HttpStatus.NOT_FOUND)
+        ); // if restaurant is not exists
 
   }
 }

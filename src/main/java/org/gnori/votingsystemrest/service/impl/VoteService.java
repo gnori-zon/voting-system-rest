@@ -25,6 +25,8 @@ public class VoteService {
   private final RestaurantDao restaurantDao;
   private final VoteConverter voteConverter;
 
+  private final LocalTime temporaryBorder;
+
   public VoteService(
       UserDao userDao,
       RestaurantDao restaurantDao,
@@ -33,6 +35,8 @@ public class VoteService {
     this.userDao = userDao;
     this.restaurantDao = restaurantDao;
     this.voteConverter = voteConverter;
+
+    temporaryBorder = LocalTime.of(11,0);
 
   }
   @Cacheable
@@ -61,12 +65,12 @@ public class VoteService {
   @CachePut(key = "#userId")
   public VoteDto createVoteByUserIdAndRestaurantId(Integer userId, Integer restaurantId) {
 
-    validateTimeVote(LocalTime.of(11,0));
+    validateTimeVoteIsBefore(temporaryBorder);
     var userEntity = validateAndGetUser(userId);
 
     if (LocalDate.now().equals(userEntity.getDateVote())) {
       throw new BadRequestException(
-          String.format("user with id: %d is vote already", userId),
+          String.format("user with id: %d is vote already today", userId),
           HttpStatus.BAD_REQUEST);
     }
 
@@ -79,7 +83,7 @@ public class VoteService {
   @CachePut(key = "#userId")
   public VoteDto updateVoteByUserIdAndRestaurantId(Integer userId, Integer restaurantId) {
 
-    validateTimeVote(LocalTime.of(11,0));
+    validateTimeVoteIsBefore(temporaryBorder);
     var userEntity = validateAndGetUser(userId);
     validateRestaurant(restaurantId, LocalDate.now());
     updateUserVoteParams(userEntity, restaurantId, LocalDate.now());
@@ -119,7 +123,7 @@ public class VoteService {
 
   }
 
-  private void validateTimeVote(LocalTime time) {
+  private void validateTimeVoteIsBefore(LocalTime time) {
 
     if (LocalTime.now().isAfter(time)) {
       throw new BadRequestException(

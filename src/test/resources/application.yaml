@@ -1,4 +1,6 @@
 spring:
+  liquibase:
+    enabled: false
   datasource:
 #   this option for avoid premature closing of the database
     url: jdbc:h2:mem:microservicesDB;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE

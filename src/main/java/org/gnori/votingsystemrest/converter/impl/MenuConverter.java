@@ -2,12 +2,14 @@ package org.gnori.votingsystemrest.converter.impl;
 
 import java.util.List;
 import org.gnori.votingsystemrest.converter.BaseConverter;
+import org.gnori.votingsystemrest.converter.ListConverter;
 import org.gnori.votingsystemrest.model.dto.MenuDto;
 import org.gnori.votingsystemrest.model.entity.MenuEntity;
 import org.springframework.stereotype.Component;
 
 @Component
-public class MenuConverter implements BaseConverter<MenuDto, MenuEntity> {
+public class MenuConverter implements BaseConverter<MenuDto, MenuEntity>,
+    ListConverter<MenuDto, MenuEntity> {
 
   public MenuDto convertFrom(MenuEntity menuEntity) {
 

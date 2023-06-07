@@ -3,13 +3,15 @@ package org.gnori.votingsystemrest.converter.impl;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.gnori.votingsystemrest.converter.BaseConverter;
+import org.gnori.votingsystemrest.converter.ListConverter;
 import org.gnori.votingsystemrest.model.dto.RestaurantDto;
 import org.gnori.votingsystemrest.model.entity.RestaurantEntity;
 import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class RestaurantConverter implements BaseConverter<RestaurantDto, RestaurantEntity> {
+public class RestaurantConverter implements BaseConverter<RestaurantDto, RestaurantEntity>,
+    ListConverter<RestaurantDto, RestaurantEntity> {
 
   private final MenuConverter menuConverter;
 

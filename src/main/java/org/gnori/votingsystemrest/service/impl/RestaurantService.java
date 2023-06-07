@@ -7,7 +7,9 @@ import org.gnori.votingsystemrest.dao.impl.RestaurantDao;
 import org.gnori.votingsystemrest.error.exceptions.impl.ConflictException;
 import org.gnori.votingsystemrest.error.exceptions.impl.NotFoundException;
 import org.gnori.votingsystemrest.converter.impl.RestaurantConverter;
+import org.gnori.votingsystemrest.model.dto.MenuDto;
 import org.gnori.votingsystemrest.model.dto.RestaurantDto;
+import org.gnori.votingsystemrest.model.entity.MenuEntity;
 import org.gnori.votingsystemrest.model.entity.RestaurantEntity;
 import org.gnori.votingsystemrest.service.AbstractService;
 import org.springframework.cache.annotation.CacheConfig;
@@ -38,10 +40,7 @@ public class RestaurantService extends AbstractService<RestaurantEntity, Restaur
   @Cacheable
   public RestaurantDto getRestaurantDtoById(Integer restaurantId) {
 
-    var restaurantEntity = get(restaurantId).orElseThrow(
-        () -> new NotFoundException(String.format("restaurant with id: %d is not exist", restaurantId),
-            HttpStatus.NOT_FOUND)
-    );
+    var restaurantEntity = getAndValidateById(restaurantId);
 
     return restaurantConverter.convertFrom(restaurantEntity);
 
@@ -56,14 +55,7 @@ public class RestaurantService extends AbstractService<RestaurantEntity, Restaur
 
   public RestaurantDto createFromRestaurantDto(RestaurantDto restaurantDto) {
 
-    if (isExistsByName(restaurantDto.getName())) {
-
-      throw new ConflictException(
-          String.format("restaurant with name: %s is already exist", restaurantDto.getName()),
-          HttpStatus.CONFLICT
-      );
-
-    }
+    checkNameForUniqueness("", restaurantDto.getName());
 
     var restaurantEntity = restaurantConverter.convertFrom(restaurantDto);
 
@@ -88,31 +80,14 @@ public class RestaurantService extends AbstractService<RestaurantEntity, Restaur
       RestaurantDto restaurantDto) {
 
     var newRestaurantEntity = restaurantConverter.convertFrom(restaurantDto);
-    var oldRestaurantEntity = get(restaurantId).orElseThrow(
-        () -> new NotFoundException(
-            String.format("restaurant with id: %d is not exist", restaurantId),
-            HttpStatus.NOT_FOUND
-        )
-    );
+    var oldRestaurantEntity = getAndValidateById(restaurantId);
 
-    if (!oldRestaurantEntity.getName().equals(newRestaurantEntity.getName()) &&
-        isExistsByName(newRestaurantEntity.getName())) {
-
-      throw new ConflictException(
-          String.format("restaurant with name: %s is already exist", restaurantDto.getName()),
-          HttpStatus.CONFLICT
-      );
-
-    }
+    checkNameForUniqueness(oldRestaurantEntity.getName(), newRestaurantEntity.getName());
 
     var oldMenu = oldRestaurantEntity.getLaunchMenu();
     var newMenu = newRestaurantEntity.getLaunchMenu();
 
-    if ((oldMenu == null && newMenu != null) ||
-        (oldMenu != null && newMenu == null) ||
-        (oldMenu != null && !oldRestaurantEntity.getLaunchMenu().getItemList().equals(
-            newRestaurantEntity.getLaunchMenu().getItemList()
-        ))) {
+    if (isMenuUpdate(oldMenu, newMenu)) {
 
       newRestaurantEntity.setUpdateMenuDate(LocalDate.now());
     }
@@ -121,7 +96,7 @@ public class RestaurantService extends AbstractService<RestaurantEntity, Restaur
         .map(restaurantConverter::convertFrom)
         .orElse(null);
 
-    if (oldMenu != null)  menuDao.deleteById(oldMenu.getId()); // deleted if menu not bind
+    if (restaurantDto != null) clearOldMenuIfExist(oldMenu, restaurantDto.getLaunchMenu());
 
     return restaurantDto;
 
@@ -136,6 +111,49 @@ public class RestaurantService extends AbstractService<RestaurantEntity, Restaur
   private boolean isExistsByName(String name) {
 
     return dao.existsByName(name);
+
+  }
+
+  private RestaurantEntity getAndValidateById(Integer restaurantId) {
+
+    return get(restaurantId).orElseThrow(
+        () -> new NotFoundException(
+            String.format("restaurant with id: %d is not exist", restaurantId),
+            HttpStatus.NOT_FOUND
+        )
+    );
+
+  }
+
+  private void checkNameForUniqueness(String oldName, String newName) {
+
+
+    if (!oldName.equals(newName) && isExistsByName(newName)) {
+
+      throw new ConflictException(
+          String.format("restaurant with name: %s is already exist", newName),
+          HttpStatus.CONFLICT
+      );
+
+    }
+
+  }
+
+  private boolean isMenuUpdate(MenuEntity oldMenu, MenuEntity newMenu) {
+
+    return ((oldMenu == null && newMenu != null) ||
+        (oldMenu != null && newMenu == null) ||
+        (oldMenu != null && !oldMenu.getItemList().equals(newMenu.getItemList()))
+    );
+
+  }
+
+
+  private void clearOldMenuIfExist(MenuEntity oldMenu, MenuDto newMenu) {
+
+    if (oldMenu != null && newMenu != null && !newMenu.getId().equals(oldMenu.getId())) {
+      menuDao.deleteById(oldMenu.getId()); // deleted if menu not bind
+    }
 
   }
 

@@ -17,7 +17,7 @@ import org.junit.jupiter.api.Test;
 class UserForAdminConverterTest extends AbstractConverterTest<UserForAdminDto, UserEntity> {
 
   UserForAdminConverterTest() {
-    super(new UserForAdminConverter());
+    super(new UserForAdminConverter(), new UserForAdminConverter());
   }
 
   @Test
@@ -110,7 +110,7 @@ class UserForAdminConverterTest extends AbstractConverterTest<UserForAdminDto, U
   @Override
   void convertFromDtoTest(UserForAdminDto raw, UserEntity expectedResult) {
 
-    var actual = factory.convertFrom(raw);
+    var actual = converter.convertFrom(raw);
 
     Assertions.assertEquals(expectedResult.getUsername(), actual.getUsername());
     Assertions.assertEquals(expectedResult.getPassword(), actual.getPassword());
