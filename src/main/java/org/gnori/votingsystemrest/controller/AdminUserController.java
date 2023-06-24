@@ -7,6 +7,7 @@ import java.util.List;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.gnori.votingsystemrest.controller.constant.Endpoint;
 import org.gnori.votingsystemrest.log.annotation.LogMethodExecutionTime;
 import org.gnori.votingsystemrest.model.dto.UserDto;
 import org.gnori.votingsystemrest.model.dto.UserDto.AdvancedValidation;
@@ -24,20 +25,16 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @Transactional
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/admin/users")
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Tag(name = "user controller for users with ADMIN role")
 @SecurityRequirement(name = "bearerAuth")
 public class AdminUserController {
-
-  public static final String ADMIN_USERS_WITH_ID_URL = "/{userId}";
 
   UserService userService;
   AuthenticationService<UserDto, Integer, String> authenticationService;
@@ -45,7 +42,8 @@ public class AdminUserController {
   @Operation(description = "get user for admin")
   @LogMethodExecutionTime
   @ResponseStatus(HttpStatus.OK)
-  @GetMapping(value = ADMIN_USERS_WITH_ID_URL, produces = MediaType.APPLICATION_JSON_VALUE)
+  @GetMapping(value = Endpoint.ADMIN_USERS_WITH_ID_URL,
+      produces = MediaType.APPLICATION_JSON_VALUE)
   public UserForAdminDto get(@PathVariable Integer userId) {
 
     return userService.getUserForAdminDtoById(userId);
@@ -55,7 +53,7 @@ public class AdminUserController {
   @Operation(description = "get all users for admin")
   @LogMethodExecutionTime
   @ResponseStatus(HttpStatus.OK)
-  @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+  @GetMapping(value = Endpoint.ADMIN_USERS, produces = MediaType.APPLICATION_JSON_VALUE)
   public List<UserForAdminDto> getAll() {
 
     return userService.getAllUserForAdminDto();
@@ -65,7 +63,8 @@ public class AdminUserController {
   @Operation(description = "create user for admin")
   @LogMethodExecutionTime
   @ResponseStatus(HttpStatus.CREATED)
-  @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE,
+  @PostMapping(value = Endpoint.ADMIN_USERS,
+      consumes = MediaType.APPLICATION_JSON_VALUE,
       produces = MediaType.APPLICATION_JSON_VALUE)
   public UserForAdminDto create(
       @Validated(ValidationOfAdmin.class) @RequestBody UserForAdminDto userForAdminDto) {
@@ -83,7 +82,7 @@ public class AdminUserController {
   @Operation(description = "update user data for admin")
   @LogMethodExecutionTime
   @ResponseStatus(HttpStatus.OK)
-  @PatchMapping(value = ADMIN_USERS_WITH_ID_URL,
+  @PatchMapping(value = Endpoint.ADMIN_USERS_WITH_ID_URL,
       consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
   public UserForAdminDto update(
       @PathVariable Integer userId,
@@ -102,7 +101,7 @@ public class AdminUserController {
   @Operation(description = "delete user for admin")
   @LogMethodExecutionTime
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  @DeleteMapping(ADMIN_USERS_WITH_ID_URL)
+  @DeleteMapping(Endpoint.ADMIN_USERS_WITH_ID_URL)
   public void delete(@PathVariable Integer userId) {
 
     userService.delete(userId);

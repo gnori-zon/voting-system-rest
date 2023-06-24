@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.gnori.votingsystemrest.controller.constant.Endpoint;
 import org.gnori.votingsystemrest.log.annotation.LogMethodExecutionTime;
 import org.gnori.votingsystemrest.model.dto.UserDto;
 import org.gnori.votingsystemrest.model.dto.UserDto.AdvancedValidation;
@@ -23,20 +24,15 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @Transactional
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1")
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Tag(name = "user controller for users")
 public class UserController {
-
-  public static final String USER_URL = "/users";
-  public static final String AUTH_URL = "/auth";
 
   private static final String AUTH_HEADER = "Authorization";
 
@@ -47,7 +43,7 @@ public class UserController {
   @SecurityRequirement(name = "bearerAuth")
   @LogMethodExecutionTime
   @ResponseStatus(HttpStatus.OK)
-  @GetMapping(value = USER_URL, produces = MediaType.APPLICATION_JSON_VALUE)
+  @GetMapping(value = Endpoint.USER_URL, produces = MediaType.APPLICATION_JSON_VALUE)
   public UserDto get(@RequestHeader(AUTH_HEADER) String token){
 
     var userId = authenticationService.getUserIdFrom(token);
@@ -59,7 +55,7 @@ public class UserController {
   @Operation(description = "register new user")
   @LogMethodExecutionTime
   @ResponseStatus(HttpStatus.CREATED)
-  @PostMapping(value = USER_URL,
+  @PostMapping(value = Endpoint.USER_URL,
       consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
   public UserDto register(
       @Validated(ValidationOfUser.class) @RequestBody UserDto userDto) {
@@ -77,7 +73,7 @@ public class UserController {
   @Operation(description = "auth user and update token")
   @LogMethodExecutionTime
   @ResponseStatus(HttpStatus.OK)
-  @PutMapping(value = AUTH_URL,
+  @PutMapping(value = Endpoint.AUTH_URL,
       consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
   public UserDto authenticateAndUpdateToken(
       @Validated(ValidationOfUser.class) @RequestBody UserDto userDto) {
@@ -96,7 +92,7 @@ public class UserController {
   @SecurityRequirement(name = "bearerAuth")
   @LogMethodExecutionTime
   @ResponseStatus(HttpStatus.OK)
-  @PatchMapping(value = USER_URL,
+  @PatchMapping(value = Endpoint.USER_URL,
       consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
   public UserDto update(
       @RequestHeader(AUTH_HEADER) String token,
@@ -118,7 +114,7 @@ public class UserController {
   @SecurityRequirement(name = "bearerAuth")
   @LogMethodExecutionTime
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  @DeleteMapping(USER_URL)
+  @DeleteMapping(Endpoint.USER_URL)
   public void delete(@RequestHeader(AUTH_HEADER) String token){
 
     var userId = authenticationService.getUserIdFrom(token);
