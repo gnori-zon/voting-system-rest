@@ -26,3 +26,7 @@ logging:
       max-history: 1
   pattern:
     file: '%d{HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n'
+
+profiling:
+  all:
+    controllers: false
