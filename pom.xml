@@ -13,7 +13,7 @@
 
   <groupId>org.gnori</groupId>
   <artifactId>voting-system-rest</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>0.0.2-SNAPSHOT</version>
   <name>voting-system-rest</name>
   <description>voting-system-rest</description>
 
