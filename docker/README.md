@@ -7,7 +7,7 @@ If the setting is changed, then the ```SPRING_DATASOURCE_USERNAME```, ```SPRING_
 Before start docker-compose you need have **volume** for saving db data. You may create volume it by typing:
 
 ```
-dicker volume create db-data-voting-system-rest
+docker volume create db-data-voting-system-rest
 ```
 
 Once configured, you can run it by typing:
@@ -23,7 +23,7 @@ docker-compose -f docker-compose.yaml down
 ```
 
 <details>
-   <summary> Subject area</summary>
+   <summary>docker-compose.yaml</summary>
 
 ```yaml
 version: '2'
