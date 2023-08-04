@@ -10,7 +10,7 @@ REST service to vote for a restaurant
 REST service for creating a restaurant, as well as a menu for them. And after that, users can vote for the restaurant.
 
 ## Documentation
-Если вы не будете использовать докер, вам потребуется база данных **postgreSQL**. Для сборки jar вы должны использовать maven 
+If you will not be using docker, you will need the **postgreSQL** database. To build jar you have to use maven
 
 ```
 ./mvnw -N package
